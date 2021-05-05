@@ -97,6 +97,7 @@ function LoginForm() {
               />
             </div>
           </div>
+          
           <div className="flex flex-row w-full bg-blue align-center mt-6">
             <div className="bg-white p-0 m-1">
               <img
