@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Calendar from "react-calendar";
+import Calendar from "../components/Calendar";
 import AttendanceChart from "../components/AttendanceChart";
 import DashboardHeader from "../components/DashboardHeader";
 import TodoComponent from "../components/TodoComponent";
@@ -9,10 +9,12 @@ import firebase from "../firebase/firebase";
 import { LABEL } from "../constants/actionTypes";
 import { AuthProvider } from "../context/AuthContext";
 import { useDashboardContext } from "../context/DashboardContext";
+import ScheduledEvent from "./ScheduledEvent";
 
 function Dashboard() {
   const currentUser = firebase.auth().currentUser;
   const [newSubjectName, setNewSubjectName] = useState("");
+
   const {
     state: { labels },
     dispatch: subjectDispatch,
@@ -64,10 +66,7 @@ function Dashboard() {
                   value={newSubjectName}
                   onChange={(e) => setNewSubjectName(e.target.value)}
                 />
-                <button
-                  onClick={addSubject}
-                  className="font-bold uppercase text-white bg-grey-900"
-                >
+                <button className="font-bold uppercase text-white bg-grey-900">
                   Add
                 </button>
               </div>
@@ -75,8 +74,14 @@ function Dashboard() {
           </div>
           <TodoComponent />
         </div>
-        <div className="md:mt-0 md:px-2 mt-8 col-span-2 bg-grey-900">
+        <div className="flex flex-col items-center md:mt-0 md:px-2 mt-8 col-span-2 bg-grey-200">
           <Calendar />
+          <div className="w-full px-4 mt-10">
+            <ScheduledEvent />
+            <ScheduledEvent />
+            <ScheduledEvent />
+            <ScheduledEvent />
+          </div>
         </div>
       </div>
     </AuthProvider>

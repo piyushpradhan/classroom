@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { FaRegTrashAlt } from "react-icons/fa";
+import { IconContext } from "react-icons";
 
 function TodoComponent() {
   const [tasks, setTasks] = useState([]);
@@ -15,12 +17,27 @@ function TodoComponent() {
         key={task.text}
         draggable
         onDragStart={(e) => onDragStart(e, task.text)}
-        className="todoItems text-md bg-grey-200 py-1 px-2 mt-2"
+        className="todoItems text-md bg-grey-200 py-1 px-2 mt-2 flex flex-row justify-between items-center"
       >
         <p>{task.text}</p>
+        <button
+          onClick={() => {
+            deleteTask(task.text);
+          }}
+        >
+          <FaRegTrashAlt />
+        </button>
       </div>
     );
   });
+
+  const deleteTask = (currentTask) => {
+    var taskList = tasks.filter((task) => {
+      if (task.text !== currentTask) return task;
+    });
+
+    setTasks(taskList);
+  };
 
   const onDragOver = (e) => {
     e.preventDefault();
@@ -28,7 +45,6 @@ function TodoComponent() {
 
   const onDragStart = (e, taskId) => {
     e.dataTransfer.setData("id", taskId);
-    console.log(taskId);
   };
 
   const onDrop = (e, colId) => {
@@ -43,14 +59,16 @@ function TodoComponent() {
   };
 
   const addNewTask = () => {
-    var nTask = {
-      id: Math.floor(Math.random() * 100),
-      text: newTask,
-      category: "todo",
-    };
+    if (newTask.trim() !== "") {
+      var nTask = {
+        id: Math.floor(Math.random() * 100),
+        text: newTask,
+        category: "todo",
+      };
 
-    setTasks([...tasks, nTask]);
-    setNewTask("");
+      setTasks([...tasks, nTask]);
+      setNewTask("");
+    }
   };
 
   return (
