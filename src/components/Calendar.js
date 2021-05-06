@@ -1,6 +1,5 @@
-import React from "react";
 import moment from "moment";
-
+import React from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
 export default class Calendar extends React.Component {
