@@ -76,9 +76,9 @@ function TodoComponent() {
       <div className="flex flex-col md:flex-row justify-between">
         <div className="flex flex-col md:w-2/3 w-full">
           <div className="text-xl font-bold mt-10 mb-4">Assignments</div>
-          <div className="flex flex-row w-full justify-between">
+          <div className="flex flex-col md:flex-row w-full justify-between">
             <div
-              className="droppable w-3/5 sm:w-full border-2 border-grey-900 py-2 px-4 mr-2 sm:mr-10 flex flex-col"
+              className="droppable w-full border-2 border-grey-900 py-2 px-4 mr-2 sm:mr-10 flex flex-col"
               onDragOver={(e) => onDragOver(e)}
               onDrop={(e) => onDrop(e, "todo")}
             >
@@ -102,7 +102,7 @@ function TodoComponent() {
               </div>
             </div>
             <div
-              className="w-2/5 sm:w-full border-2 border-grey-900 py-2 px-4 mr-10 flex flex-col"
+              className="w-full mt-4 md:mt-0 border-2 border-grey-900 py-2 px-4 mr-10 flex flex-col"
               onDragOver={(e) => onDragOver(e)}
               onDrop={(e) => onDrop(e, "done")}
             >

@@ -1,7 +1,5 @@
-import { createContext, useReducer, useContext, useEffect } from "react";
-import AuthReducer from "../reducers/AuthReducer";
+import { createContext, useState, useContext, useEffect } from "react";
 
-import cookie from "js-cookie";
 import firebase from "../firebase/firebase";
 
 const Auth = createContext();
@@ -9,28 +7,13 @@ const Auth = createContext();
 const tokenName = "firebaseToken";
 
 export const AuthProvider = ({ children }) => {
-  const initialState = {
-    user: null,
-  };
-  const [state, dispatch] = useReducer(AuthReducer, initialState);
-
-  const emailLogin = async (email, password, redirectPath) => {
-    await firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then(() => {
-        console.log("user logged in ");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
+  const [currentUser, setCurrentUser] = useState(null); 
 
   return (
     <Auth.Provider
       value={{
-        state,
-        dispatch,
+        currentUser, 
+        setCurrentUser
       }}
     >
       {children}

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import firebase from "../firebase/firebase";
 import { useAuthContext } from "../context/AuthContext";
 import { LOGIN } from "../constants/actionTypes";
@@ -10,12 +10,29 @@ function LoginForm() {
 
   const history = useHistory();
 
-  const {
-    state: { user },
-    dispatch: authDispatch,
-  } = useAuthContext();
+  const { currentUser, setCurrentUser } = useAuthContext();
 
-  //   const router = useRouter();
+  useEffect(() => {
+    const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
+      setCurrentUser(user);
+    });
+    return unsubscribe();
+  }, []);
+
+  function storeUserDetails(user) {
+    const firestore = firebase.firestore();
+    const docRef = firestore.collection("users").doc(user.uid);
+    docRef.get().then((snapshot) => {
+      if (!snapshot.exists) {
+        docRef.set({
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURL: user.photoURL,
+          email: user.email,
+        });
+      }
+    });
+  }
 
   const login = async (e) => {
     e.preventDefault();
@@ -24,10 +41,7 @@ function LoginForm() {
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
         console.log(response.user);
-        authDispatch({
-          type: LOGIN,
-          payload: response.user,
-        });
+        setCurrentUser(response.user);
         history.push("/dashboard");
       });
   };
@@ -41,19 +55,17 @@ function LoginForm() {
       .then((result) => {
         let credential = result.credential;
         let token = credential.accessToken;
-        // let user = result.user;
         console.log(result.user);
-        authDispatch({
-          type: LOGIN,
-          payload: result.user,
-        });
+        setCurrentUser(result.user);
+
+        storeUserDetails(result.user);
+
         history.push("/dashboard");
       })
       .catch((err) => {
         var code = err.code;
         var errorMessgae = err.message;
       });
-    firebase.auth().setPersistence(firebase.auth.Auth.Persistence.SESSION);
   };
 
   return (
@@ -97,7 +109,7 @@ function LoginForm() {
               />
             </div>
           </div>
-          
+
           <div className="flex flex-row w-full bg-blue align-center mt-6">
             <div className="bg-white p-0 m-1">
               <img

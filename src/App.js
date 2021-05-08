@@ -4,6 +4,7 @@ import LoginForm from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
 import { DashboardProvider } from "./context/DashboardContext";
+import PrivateRoute from './components/PrivateRoute'; 
 
 function App() {
   return (
@@ -12,8 +13,8 @@ function App() {
         <AuthProvider>
           <DashboardProvider>
             <Switch>
+              <Route path="/dashboard"  component={Dashboard} />
               <Route path="/login" component={LoginForm} />
-              <Route path="/dashboard" component={Dashboard} />
             </Switch>
           </DashboardProvider>
         </AuthProvider>
