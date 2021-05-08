@@ -1,5 +1,4 @@
 import React, { createContext, useState, useReducer, useContext } from "react";
-import DashboardReducer from "../reducers/DashboardReducer";
 
 const initialData = {
   labels: ["ADA", "OB", "FLAT", "COA", "OS"],
@@ -17,15 +16,23 @@ const initialData = {
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
-  const initialState = {
-    labels: initialData.labels,
-    data: [65, 59, 80, 81, 56],
-    dataset: initialData,
+  const initialAttendanceState = {
+    labels: [],
+    data: [],
   };
-  const [state, dispatch] = useReducer(DashboardReducer, initialState);
+  const [attendanceState, setAttendanceState] = useState(initialAttendanceState);
+
+  function updateData(data) {
+    const tempData = {
+      labels: data.labels, 
+      data: data.data, 
+    }; 
+
+    setAttendanceState(tempData); 
+  }
 
   return (
-    <DashboardContext.Provider value={{ state, dispatch }}>
+    <DashboardContext.Provider value={{ attendanceState, updateData }}>
       {children}
     </DashboardContext.Provider>
   );

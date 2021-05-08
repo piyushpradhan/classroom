@@ -1,21 +1,18 @@
 import { LABEL } from "../constants/actionTypes";
 
-export default (state, action) => {
+const DashboardReducer = (state, action) => {
   switch (action.type) {
     case LABEL:
+      console.log(action.payload); 
       return {
         ...state,
-        labels: [action.payload, ...state.labels],
-        data: [0, ...state.data],
-      };
-
-    case 'LABEL_REMOVE':
-      return {
-        ...state,
-        labels: state.labels.filter((label) => label.id !== action.payload.id),
+        labels: [action.payload.labels, ...state.labels],
+        data: [action.payload.data, ...state.data],
       };
 
     default:
       return state;
   }
 };
+
+export default DashboardReducer; 
