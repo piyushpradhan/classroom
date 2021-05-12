@@ -15,34 +15,25 @@ const AttendanceChart = React.memo(() => {
     attendanceState, 
     updateData, 
   } = useDashboardContext();
-
-  useEffect(() => {
-    async function fetchData() {
-      const response = firestore.collection("users").doc(currentUser.uid);  
-      response.get().then((snapshot) => {
-        console.log(snapshot.data().attendanceData); 
-        updateData(snapshot.data().attendanceData); 
-      })
-    }
-    fetchData();
-  }, []);
-
+  
+  var labels = Object.keys(attendanceState.data); 
+  var data = Object.values(attendanceState.data); 
   const attendanceData = {
-    labels: attendanceState.labels,  
+    labels: labels,  
     datasets: [
       {
         label: "Attendance",
         backgroundColor: "rgba(255, 255, 255 ,1)",
         borderColor: "rgba(0,0,0,1)",
         borderWidth: 2,
-        data: attendanceState.data,
+        data: data,
       },
     ],
   };
 
   return (
     <>
-      <Bar data={attendanceData} options={options} />
+      <Bar data={attendanceData} />
     </>
   );
 });

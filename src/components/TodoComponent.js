@@ -1,10 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { IconContext } from "react-icons";
 
-function TodoComponent() {
+import firebase from "../firebase/firebase";
+
+function TodoComponent({ currentUser }) {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
+
+  useEffect(() => {
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+
+    response.get().then((snapshot) => {
+      const temp = snapshot.data().todos;
+      setTasks(temp);
+    });
+  }, []);
 
   var tempTask = {
     todo: [],
@@ -31,14 +45,6 @@ function TodoComponent() {
     );
   });
 
-  const deleteTask = (currentTask) => {
-    var taskList = tasks.filter((task) => {
-      if (task.text !== currentTask) return task;
-    });
-
-    setTasks(taskList);
-  };
-
   const onDragOver = (e) => {
     e.preventDefault();
   };
@@ -52,6 +58,22 @@ function TodoComponent() {
     var list = tasks.filter((task) => {
       if (task.text === id) {
         task.category = colId;
+        const response = firebase
+          .firestore()
+          .collection("users")
+          .doc(currentUser.uid);
+        response.get().then((snapshot) => {
+          const updated = snapshot.data().todos.map((todo) => {
+            if (todo.text === id) {
+              const updatedTask = todo;
+              updatedTask.category = colId;
+            }
+            return todo;
+          });
+          response.update({
+            todos: updated,
+          });
+        });
       }
       return task;
     });
@@ -61,16 +83,43 @@ function TodoComponent() {
   const addNewTask = () => {
     if (newTask.trim() !== "") {
       var nTask = {
-        id: Math.floor(Math.random() * 100),
         text: newTask,
         category: "todo",
       };
-
-      setTasks([...tasks, nTask]);
+      var temp = tasks;
+      temp.push(nTask);
+      setTasks(temp);
+      console.log(typeof tasks);
+      const response = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+      response.get().then((snapshot) => {
+        response.update({
+          todos: tasks,
+        });
+        console.log(typeof tasks);
+      });
       setNewTask("");
     }
   };
 
+  const deleteTask = (currentTask) => {
+    var taskList = tasks.filter((task) => {
+      if (task.text !== currentTask) {
+        return task;
+      }
+    });
+
+    setTasks(taskList);
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+    response.update({
+      todos: taskList, 
+    }); 
+  };
   return (
     <>
       <div className="flex flex-col md:flex-row justify-between">

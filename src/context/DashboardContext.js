@@ -1,4 +1,12 @@
-import React, { createContext, useState, useReducer, useContext } from "react";
+import React, {
+  createContext,
+  useState,
+  useReducer,
+  useContext,
+  useEffect,
+} from "react";
+import { AuthProvider } from "../context/AuthContext";
+import firebase from "../firebase/firebase";
 
 const initialData = {
   labels: ["ADA", "OB", "FLAT", "COA", "OS"],
@@ -16,25 +24,24 @@ const initialData = {
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
-  const initialAttendanceState = {
-    labels: [],
-    data: [],
-  };
-  const [attendanceState, setAttendanceState] = useState(initialAttendanceState);
+  const [attendanceState, setAttendanceState] = useState({
+    data: {},
+  });
 
-  function updateData(data) {
+  function updateData(newData) {
     const tempData = {
-      labels: data.labels, 
-      data: data.data, 
-    }; 
+      data: newData,
+    };
 
-    setAttendanceState(tempData); 
+    setAttendanceState(tempData);
   }
 
   return (
-    <DashboardContext.Provider value={{ attendanceState, updateData }}>
-      {children}
-    </DashboardContext.Provider>
+    <AuthProvider>
+      <DashboardContext.Provider value={{ attendanceState, updateData }}>
+        {children}
+      </DashboardContext.Provider>
+    </AuthProvider>
   );
 };
 
