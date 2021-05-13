@@ -1,0 +1,9 @@
+.parent-div {
+  overflow-y: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.parent-div::-webkit-scrollbar {
+  display: none;
+}

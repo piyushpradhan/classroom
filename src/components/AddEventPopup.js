@@ -6,9 +6,9 @@ function AddEventPopup() {
       <div className="absolute w-full h-full bg-grey-900 -right-2 -bottom-2"></div>
       <div className="relative w-full border-2 border-black bg-white p-8 flex flex-col items-start">
         <div className="text-xl font-bold">Add Event</div>
-        <div className="mt-4">
+        <div className="mt-4 w-full">
           <input
-            className="focus:outline-none text-sm"
+            className="focus:outline-none w-full text-sm"
             type="text"
             placeholder="Enter event Title"
           />
