@@ -1,4 +1,5 @@
 import "./App.css";
+import './public/css/dashboard.css';
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import LoginForm from "./components/Login";
 import Dashboard from "./components/Dashboard";
@@ -8,7 +9,7 @@ import PrivateRoute from './components/PrivateRoute';
 
 function App() {
   return (
-    <div>
+    <div className="parent-div">
       <Router>
         <AuthProvider>
           <DashboardProvider>

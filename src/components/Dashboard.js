@@ -73,12 +73,38 @@ function Dashboard() {
     const firestore = firebase.firestore();
     const response = firestore.collection("users").doc(currentUser.uid);
     response.get().then((snapshot) => {
-      const prev = snapshot.data().attendanceData.data;
-      const temp = prev.delete(selectedSub);
+      const temp = snapshot.data().attendanceData;
+      temp.delete(selectedSub); 
       updateData(temp);
       response.update({
         attendanceData: temp,
       });
+    });
+  }
+
+  function incrementAttendance(sub) {
+    var updated = attendanceState.data;
+    updated[sub]++;
+    updateData(updated);
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+    response.update({
+      attendanceData: updated,
+    });
+  }
+
+  function decrementAttendance(sub) {
+    var updated = attendanceState.data;
+    updated[sub]--;
+    updateData(updated);
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+    response.update({
+      attendanceData: updated,
     });
   }
 
@@ -91,7 +117,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="w-screen h-screen overflow-x-hidden flex 2xl:flex-row flex-col justify-between">
+    <div className="w-screen min-h-screen flex 2xl:flex-row flex-col justify-between">
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -99,11 +125,11 @@ function Dashboard() {
       >
         <AddEventPopup />
       </Modal>
-      <div className="flex-grow bg-white flex flex-col px-16  h-full">
+      <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16  h-full">
         <DashboardHeader />
         <div className="text-xl my-4 font-bold">Attendance Chart</div>
         <div className="flex flex-col h-full">
-          <div className="flex flex-col items-center xl:max-h-max md:flex-row border-2 border-grey-900 xl:w-full py-4">
+          <div className="flex flex-col items-center xl:max-h-max lg:flex-row border-2 border-grey-900 xl:w-full py-4">
             <div className="sm:w-3/5 sm:h-full mx-4">
               <AttendanceChart />
             </div>
@@ -116,18 +142,30 @@ function Dashboard() {
                   return (
                     <div className="flex flex-row justify-between w-full">
                       <div className="flex flex-row items-center w-full justify-between">
-                        <FiChevronLeft />
+                        <button
+                          onClick={() => {
+                            decrementAttendance(label);
+                          }}
+                        >
+                          <FiChevronLeft />
+                        </button>
                         <div className="bg-grey-900 flex-grow-1 rounded rounded-full px-2 py-0 mt-1 text-white">
-                          {label} {" "} {attendanceState.data[label]}
+                          {label} {attendanceState.data[label]}
                         </div>
-                        <FiChevronRight />
+                        <button
+                          onClick={() => {
+                            incrementAttendance(label);
+                          }}
+                        >
+                          <FiChevronRight />
+                        </button>
                         <FaRegTrashAlt />
                       </div>
                     </div>
                   );
                 })}
               </div>
-              <div className="flex flex-col border border-grey-900 sm:mt-11 mx-8 sm:ml-8">
+              <div className="flex flex-col border-2 border-grey-900 sm:mt-11 mx-8 sm:ml-8">
                 <div className="text-md font-semibold text-center mt-2">
                   Add new subject
                 </div>
@@ -150,7 +188,7 @@ function Dashboard() {
           <TodoComponent currentUser={currentUser} />
         </div>
       </div>
-      <div className="flex flex-col md:items-center md:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">
+      <div className="flex flex-col md:items-center 2xl:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">
         <Calendar />
         <div className="flex flex-row md:px-4 mt-10 w-full justify-between">
           <div className="font-bold text-lg">Scheduled Events</div>
