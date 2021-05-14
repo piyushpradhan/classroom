@@ -14,7 +14,9 @@ function DashboardHeader() {
           alt=""
         />
         <div className="flex flex-col mx-4">
-          <div className="text-2xl font-bold">{currentUser ? currentUser.displayName : ""}</div>
+          <div className="text-2xl font-bold">
+            {currentUser ? currentUser.displayName : ""}
+          </div>
           <div className="text-md">Regd. No: 1901106220</div>
         </div>
       </div>

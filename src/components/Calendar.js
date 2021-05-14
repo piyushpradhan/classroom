@@ -2,7 +2,7 @@ import moment from "moment";
 import React from "react";
 import { BiChevronLeft, BiChevronRight } from "react-icons/bi";
 
-import firebase from '../firebase/firebase'; 
+import firebase from "../firebase/firebase";
 
 export default class Calendar extends React.Component {
   state = {
@@ -18,9 +18,9 @@ export default class Calendar extends React.Component {
     this.width = props.width || "350px";
     this.style = props.style || {};
     this.style.width = this.width;
-    this.currentUser = props.currentUser; 
-    this.attendanceState = props.attendanceState; 
-    this.updateData = props.updateData; 
+    this.currentUser = props.currentUser;
+    this.attendanceState = props.attendanceState;
+    this.updateData = props.updateData;
   }
 
   weekdays = moment.weekdays();
@@ -189,17 +189,25 @@ export default class Calendar extends React.Component {
         selectedDay: day,
       },
       () => {
-        const response = firebase.firestore().collection("users").doc(this.currentUser.uid); 
+        const response = firebase
+          .firestore()
+          .collection("users")
+          .doc(this.currentUser.uid);
         response.get().then(async (snapshot) => {
-          var events = []; 
+          var events = [];
           events = snapshot.data().events;
-          var data = snapshot.data().attendanceData; 
+          var data = snapshot.data().attendanceData;
           const filtered = events.filter((event) => {
-            var selected = this.year() + "-" + this.state.dateContext.format("MM") + "-" + day;
-            if(selected === event.date) return event;  
+            var selected =
+              this.year() +
+              "-" +
+              this.state.dateContext.format("MM") +
+              "-" +
+              day;
+            if (selected === event.date) return event;
           });
-          this.updateData(data, filtered); 
-        }); 
+          this.updateData(data, filtered);
+        });
       }
     );
 

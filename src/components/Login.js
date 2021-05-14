@@ -28,9 +28,9 @@ function LoginForm() {
           displayName: user.displayName,
           photoURL: user.photoURL,
           email: user.email,
-          attendanceData: {}, 
-          events: [], 
-          todos: [], 
+          attendanceData: {},
+          events: [],
+          todos: [],
         });
       }
     });
@@ -131,7 +131,9 @@ function LoginForm() {
               value="Sign in with Google"
               onClick={loginWithGoogle}
               className="w-full bg-blue text-md font-bold text-white focus:outline-none"
-          >Continue with Google</button>
+            >
+              Continue with Google
+            </button>
           </div>
           <div className="text-grey-900 text-md text-center font-semibold mt-2">
             Don't have an account?{" "}
