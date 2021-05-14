@@ -6,7 +6,6 @@ import firebase from '../firebase/firebase';
 
 export default function PrivateRoute({ component: Component, ...rest }) {
   const { currentUser } = useAuthContext();
-  console.log(firebase.auth().isAuthenticated); 
 
   return (
     <Route
