@@ -3,7 +3,6 @@ import firebase from "../firebase/firebase";
 import { useAuthContext } from "../context/AuthContext";
 import { LOGIN } from "../constants/actionTypes";
 import { useHistory } from "react-router-dom";
-
 function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,6 +28,9 @@ function LoginForm() {
           displayName: user.displayName,
           photoURL: user.photoURL,
           email: user.email,
+          attendanceData: {}, 
+          events: [], 
+          todos: [], 
         });
       }
     });
@@ -36,7 +38,7 @@ function LoginForm() {
 
   const login = async (e) => {
     e.preventDefault();
-    await firebase
+    firebase
       .auth()
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
@@ -48,23 +50,28 @@ function LoginForm() {
 
   const loginWithGoogle = async (e) => {
     e.preventDefault();
-    let provider = new firebase.auth.GoogleAuthProvider();
     firebase
       .auth()
-      .signInWithPopup(provider)
-      .then((result) => {
-        let credential = result.credential;
-        let token = credential.accessToken;
-        console.log(result.user);
-        setCurrentUser(result.user);
+      .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .then(() => {
+        let provider = new firebase.auth.GoogleAuthProvider();
+        firebase
+          .auth()
+          .signInWithPopup(provider)
+          .then((result) => {
+            let credential = result.credential;
+            let token = credential.accessToken;
+            console.log(result.user);
+            setCurrentUser(result.user);
 
-        storeUserDetails(result.user);
+            storeUserDetails(result.user);
 
-        history.push("/dashboard");
-      })
-      .catch((err) => {
-        var code = err.code;
-        var errorMessgae = err.message;
+            history.push("/dashboard");
+          })
+          .catch((err) => {
+            var code = err.code;
+            var errorMessgae = err.message;
+          });
       });
   };
 
@@ -119,12 +126,12 @@ function LoginForm() {
                 alt="Google Logo"
               />
             </div>
-            <input
+            <button
               type="button"
               value="Sign in with Google"
               onClick={loginWithGoogle}
-              className="w-full bg-blue text-md font-bold text-white"
-            />
+              className="w-full bg-blue text-md font-bold text-white focus:outline-none"
+          >Continue with Google</button>
           </div>
           <div className="text-grey-900 text-md text-center font-semibold mt-2">
             Don't have an account?{" "}

@@ -15,7 +15,8 @@ function TodoComponent({ currentUser }) {
       .doc(currentUser.uid);
 
     response.get().then((snapshot) => {
-      const temp = snapshot.data().todos;
+      var temp = [];
+      if (snapshot.data()) temp = snapshot.data().todos; 
       setTasks(temp);
     });
   }, []);
