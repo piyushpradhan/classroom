@@ -19,8 +19,6 @@
     "react-modal": "^3.13.1",
     "react-router-dom": "^5.2.0",
     "react-scripts": "^4.0.3",
-    "tailwind": "^4.0.0",
-    "tailwindcss": "^2.1.2",
     "web-vitals": "^1.1.1"
   },
   "scripts": {
@@ -46,5 +44,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^4.5.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^4.7.0",
+    "webpack-dev-middleware": "^3.7.3",
+    "webpack-dev-server": "^3.11.1"
   }
 }
