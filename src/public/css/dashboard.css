@@ -1,9 +1,7 @@
-.parent-div {
-  overflow-y: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.dashboard::-webkit-scrollbar {
+  display: none;
 }
 
-.parent-div::-webkit-scrollbar {
-  display: none;
+.dashboard {
+  -ms-overflow-style: none;
 }

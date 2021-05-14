@@ -19,6 +19,7 @@ import { useDashboardContext } from "../context/DashboardContext";
 import { useAuthContext } from "../context/AuthContext";
 import ScheduledEvent from "./ScheduledEvent";
 import AddEventPopup from "./AddEventPopup";
+import "../public/css/dashboard.css";
 
 const modalStyle = {
   content: {
@@ -50,13 +51,31 @@ function Dashboard() {
       .collection("users")
       .doc(currentUser.uid);
     response.get().then((snapshot) => {
-      var temp = {}; 
-      if (snapshot.data()) temp = snapshot.data().attendanceData; 
+      var temp = {};
+      if (snapshot.data()) temp = snapshot.data().attendanceData;
       var tempEvents = [];
-      if (snapshot.data()) tempEvents = snapshot.data().events; 
+      if (snapshot.data()) tempEvents = getTodayEvents(snapshot.data());
       updateData(temp, tempEvents);
     });
   }, []);
+
+  function getToday() {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0");
+    var yyyy = today.getFullYear();
+
+    today = yyyy + "-" + mm + "-" + dd;
+    return today;
+  }
+
+  function getTodayEvents(snapshotData) {
+    var today = getToday();
+    const events = snapshotData.events.filter((event) => {
+      if (event.date === today) return event;
+    });
+    return events;
+  }
 
   function addSubject() {
     const firestore = firebase.firestore();
@@ -124,7 +143,7 @@ function Dashboard() {
   }
 
   return (
-    <div className="w-screen min-h-screen flex 2xl:flex-row flex-col justify-between">
+    <div className="dashboard w-screen min-h-screen flex 2xl:flex-row flex-col justify-between">
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
@@ -198,7 +217,7 @@ function Dashboard() {
         </div>
       </div>
       <div className="flex flex-col md:items-center 2xl:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">
-        <Calendar />
+        <Calendar updateData={updateData} attendanceState={attendanceState} currentUser={currentUser} />
         <div className="flex flex-row md:px-4 mt-10 w-full justify-between">
           <div className="font-bold text-lg">Scheduled Events</div>
           <button
@@ -210,12 +229,10 @@ function Dashboard() {
         </div>
         <div className="w-full px-4 mt-2">
           {attendanceState.events.map((event) => {
-            var bgColor = "white"; 
-            if (event.color !== null || event.color !== "") 
-              bgColor = event.color; 
-            return (
-              <ScheduledEvent event={event} popupColor={bgColor}/>
-            )
+            var bgColor = "white";
+            if (event.color !== null || event.color !== "")
+              bgColor = event.color;
+            return <ScheduledEvent event={event} popupColor={bgColor} />;
           })}
         </div>
       </div>

@@ -26,8 +26,19 @@ function AddEventPopup({ currentUser, toggleModal }) {
     setColor(updatedColor);
   }
 
+  function getToday() {
+    var today = new Date();
+    var dd = String(today.getDate()).padStart(2, "0");
+    var mm = String(today.getMonth() + 1).padStart(2, "0");
+    var yyyy = today.getFullYear();
+
+    today = yyyy + "-" + mm + "-" + dd;
+    return today;
+  }
+
   function addNewEvent() {
-    if (title.trim() === "" || desc.trim() === "" || date === "") {
+    if (title.trim() === "" || date === "") {
+      window.alert("Title and date fields are mandatory"); 
       return; 
     } 
     const response = firebase.firestore().collection("users").doc(currentUser.uid); 
@@ -40,10 +51,13 @@ function AddEventPopup({ currentUser, toggleModal }) {
         end: end, 
         date: date, 
         color: color, 
-      }; 
+      };
+      const today = getToday(); 
       const prev = snapshot.data().events; 
       prev.push(newEvent); 
-      updateData(attendanceState.data, prev); 
+      const updated = prev; 
+      if(newEvent.date === today) updated.push(newEvent);
+      updateData(attendanceState.data, updated); 
       response.update({
         events: prev,  
       }); 
