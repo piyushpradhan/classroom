@@ -50,18 +50,21 @@ function Dashboard() {
       .collection("users")
       .doc(currentUser.uid);
     response.get().then((snapshot) => {
-      const temp = snapshot.data().attendanceData;
-      updateData(temp);
+      var temp = {}; 
+      if (snapshot.data()) temp = snapshot.data().attendanceData; 
+      var tempEvents = [];
+      if (snapshot.data()) tempEvents = snapshot.data().events; 
+      updateData(temp, tempEvents);
     });
   }, []);
 
-  async function addSubject() {
+  function addSubject() {
     const firestore = firebase.firestore();
     const response = firestore.collection("users").doc(currentUser.uid);
     response.get().then((snapshot) => {
       const temp = snapshot.data().attendanceData;
       temp[newSubjectName] = 0;
-      updateData(temp);
+      updateData(temp, attendanceState.events);
       response.update({
         attendanceData: temp,
       });
@@ -69,13 +72,17 @@ function Dashboard() {
     setNewSubjectName("");
   }
 
-  async function deleteSubject(selectedSub) {
+  function deleteSubject(selectedSub) {
     const firestore = firebase.firestore();
     const response = firestore.collection("users").doc(currentUser.uid);
     response.get().then((snapshot) => {
       const temp = snapshot.data().attendanceData;
-      temp.delete(selectedSub); 
-      updateData(temp);
+      Object.keys(temp).map((item) => {
+        if (item === selectedSub) {
+          delete temp[item];
+        }
+      });
+      updateData(temp, attendanceState.events);
       response.update({
         attendanceData: temp,
       });
@@ -85,7 +92,7 @@ function Dashboard() {
   function incrementAttendance(sub) {
     var updated = attendanceState.data;
     updated[sub]++;
-    updateData(updated);
+    updateData(updated, attendanceState.events);
     const response = firebase
       .firestore()
       .collection("users")
@@ -98,7 +105,7 @@ function Dashboard() {
   function decrementAttendance(sub) {
     var updated = attendanceState.data;
     updated[sub]--;
-    updateData(updated);
+    updateData(updated, attendanceState.events);
     const response = firebase
       .firestore()
       .collection("users")
@@ -123,7 +130,7 @@ function Dashboard() {
         onRequestClose={closeModal}
         style={modalStyle}
       >
-        <AddEventPopup />
+        <AddEventPopup currentUser={currentUser} toggleModal={toggleModal} />
       </Modal>
       <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16  h-full">
         <DashboardHeader />
@@ -159,7 +166,9 @@ function Dashboard() {
                         >
                           <FiChevronRight />
                         </button>
-                        <FaRegTrashAlt />
+                        <button onClick={() => deleteSubject(label)}>
+                          <FaRegTrashAlt />
+                        </button>
                       </div>
                     </div>
                   );
@@ -200,10 +209,14 @@ function Dashboard() {
           </button>
         </div>
         <div className="w-full px-4 mt-2">
-          <ScheduledEvent />
-          <ScheduledEvent />
-          <ScheduledEvent />
-          <ScheduledEvent />
+          {attendanceState.events.map((event) => {
+            var bgColor = "white"; 
+            if (event.color !== null || event.color !== "") 
+              bgColor = event.color; 
+            return (
+              <ScheduledEvent event={event} popupColor={bgColor}/>
+            )
+          })}
         </div>
       </div>
     </div>

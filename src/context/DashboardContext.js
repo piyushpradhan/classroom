@@ -8,29 +8,18 @@ import React, {
 import { AuthProvider } from "../context/AuthContext";
 import firebase from "../firebase/firebase";
 
-const initialData = {
-  labels: ["ADA", "OB", "FLAT", "COA", "OS"],
-  datasets: [
-    {
-      label: "Attendance",
-      backgroundColor: "rgba(255, 255, 255 ,1)",
-      borderColor: "rgba(0,0,0,1)",
-      borderWidth: 2,
-      data: [65, 59, 80, 81, 56],
-    },
-  ],
-};
-
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
   const [attendanceState, setAttendanceState] = useState({
     data: {},
+    events: [],
   });
 
-  function updateData(newData) {
+  function updateData(newData, newEvents) {
     const tempData = {
       data: newData,
+      events: newEvents, 
     };
 
     setAttendanceState(tempData);
