@@ -135,12 +135,12 @@ function LoginForm() {
               Continue with Google
             </button>
           </div>
-          <div className="text-grey-900 text-md text-center font-semibold mt-2">
+          {/* <div className="text-grey-900 text-md text-center font-semibold mt-2">
             Don't have an account?{" "}
             <a href="/auth/register">
               <span className="text-blue">Create one!</span>
             </a>
-          </div>
+          </div> */}
         </div>
       </form>
     </div>
