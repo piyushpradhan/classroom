@@ -1,7 +1,6 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import firebase from "../firebase/firebase";
 import { useAuthContext } from "../context/AuthContext";
-import { LOGIN } from "../constants/actionTypes";
 import { useHistory } from "react-router-dom";
 function LoginForm() {
   const [email, setEmail] = useState("");
@@ -9,7 +8,7 @@ function LoginForm() {
 
   const history = useHistory();
 
-  const { currentUser, setCurrentUser } = useAuthContext();
+  const { setCurrentUser } = useAuthContext();
 
   useEffect(() => {
     const unsubscribe = firebase.auth().onAuthStateChanged((user) => {
@@ -59,9 +58,6 @@ function LoginForm() {
           .auth()
           .signInWithPopup(provider)
           .then((result) => {
-            let credential = result.credential;
-            let token = credential.accessToken;
-            console.log(result.user);
             setCurrentUser(result.user);
 
             storeUserDetails(result.user);
@@ -70,7 +66,8 @@ function LoginForm() {
           })
           .catch((err) => {
             var code = err.code;
-            var errorMessgae = err.message;
+            var errorMessage = err.message;
+            console.log(code + errorMessage); 
           });
       });
   };

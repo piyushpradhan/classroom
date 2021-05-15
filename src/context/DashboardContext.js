@@ -1,12 +1,9 @@
 import React, {
   createContext,
   useState,
-  useReducer,
   useContext,
-  useEffect,
 } from "react";
 import { AuthProvider } from "../context/AuthContext";
-import firebase from "../firebase/firebase";
 
 const DashboardContext = createContext();
 

@@ -87,14 +87,12 @@ export default class Calendar extends React.Component {
           key={data}
           className="text-sm mt-1 hover:bg-grey-200 transition all duration-200"
         >
-          <a
-            href="#"
+          <button
             onClick={(e) => {
-              this.onSelectChange(e, data);
             }}
           >
             {data}
-          </a>
+          </button>
         </div>
       );
     });
@@ -197,15 +195,13 @@ export default class Calendar extends React.Component {
           var events = [];
           events = snapshot.data().events;
           var data = snapshot.data().attendanceData;
-          const filtered = events.filter((event) => {
             var selected =
               this.year() +
               "-" +
               this.state.dateContext.format("MM") +
               "-" +
               day;
-            if (selected === event.date) return event;
-          });
+          const filtered = events.filter((event) => event.date === selected);
           this.updateData(data, filtered);
         });
       }
@@ -237,10 +233,9 @@ export default class Calendar extends React.Component {
     let daysInMonth = [];
     for (let d = 1; d <= this.daysInMonth(); d++) {
       let currentDayClass =
-        d == this.currentDay()
+        d === this.currentDay()
           ? "bg-white border-2 border-black flex flex-row text-black font-bold w-16 h-16 justify-center items-center transition-all"
           : "flex flex-row text-black font-bold w-16 h-16 justify-center items-center hover:bg-grey-900 hover:text-white transition all duration-300 ease-in-out";
-      let selectedClass = d == this.state.selectedDay ? " selected-day " : "";
       daysInMonth.push(
         <div key={d} className={currentDayClass}>
           <span
@@ -273,7 +268,7 @@ export default class Calendar extends React.Component {
       }
     });
     let trElems = rows.map((d, i) => {
-      if (d.length == 7) {
+      if (d.length === 7) {
         return (
           <div className="flex flex-row text-black w-full" key={i * 100}>
             <div className="flex flex-row w-full">{d}</div>
