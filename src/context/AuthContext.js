@@ -1,10 +1,6 @@
-import { createContext, useState, useContext, useEffect } from "react";
-
-import firebase from "../firebase/firebase";
+import { createContext, useState, useContext } from "react";
 
 const Auth = createContext();
-
-const tokenName = "firebaseToken";
 
 export const AuthProvider = ({ children }) => {
   const [currentUser, setCurrentUser] = useState(null); 
