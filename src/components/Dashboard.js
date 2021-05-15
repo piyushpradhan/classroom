@@ -9,12 +9,8 @@ import Calendar from "../components/Calendar";
 import AttendanceChart from "../components/AttendanceChart";
 import DashboardHeader from "../components/DashboardHeader";
 import TodoComponent from "../components/TodoComponent";
-import EditSubject from "../components/EditSubject";
-import { useHistory } from "react-router-dom";
 
 import firebase from "../firebase/firebase";
-import { LABEL } from "../constants/actionTypes";
-import { AuthProvider } from "../context/AuthContext";
 import { useDashboardContext } from "../context/DashboardContext";
 import { useAuthContext } from "../context/AuthContext";
 import ScheduledEvent from "./ScheduledEvent";
@@ -39,7 +35,6 @@ const modalStyle = {
 function Dashboard() {
   const [newSubjectName, setNewSubjectName] = useState("");
   const [modalIsOpen, toggleModal] = useState(false);
-  const [labels, setLabels] = useState([]);
 
   const { attendanceState, updateData } = useDashboardContext();
 
@@ -71,9 +66,7 @@ function Dashboard() {
 
   function getTodayEvents(snapshotData) {
     var today = getToday();
-    const events = snapshotData.events.filter((event) => {
-      if (event.date === today) return event;
-    });
+    const events = snapshotData.events.filter((event) => event.date === today);
     return events;
   }
 
@@ -100,6 +93,7 @@ function Dashboard() {
         if (item === selectedSub) {
           delete temp[item];
         }
+        return item; 
       });
       updateData(temp, attendanceState.events);
       response.update({

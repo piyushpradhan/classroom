@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
-import { IconContext } from "react-icons";
 
 import firebase from "../firebase/firebase";
 
@@ -106,11 +105,7 @@ function TodoComponent({ currentUser }) {
   };
 
   const deleteTask = (currentTask) => {
-    var taskList = tasks.filter((task) => {
-      if (task.text !== currentTask) {
-        return task;
-      }
-    });
+    var taskList = tasks.filter((task) => task.text !== currentTask);
 
     setTasks(taskList);
     const response = firebase
