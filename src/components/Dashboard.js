@@ -217,14 +217,18 @@ function Dashboard() {
         </div>
       </div>
       <div className="flex flex-col md:items-center 2xl:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">
-        <Calendar updateData={updateData} attendanceState={attendanceState} currentUser={currentUser} />
+        <Calendar
+          updateData={updateData}
+          attendanceState={attendanceState}
+          currentUser={currentUser}
+        />
         <div className="flex flex-row md:px-4 mt-10 w-full justify-between">
           <div className="font-bold text-lg">Scheduled Events</div>
           <button
             className="outline-none border-none focus:outline-none focus:border-none"
             onClick={openModal}
           >
-            <BiCalendarPlus className="text-2xl focus:outline-none" />
+            <BiCalendarPlus className="text-2xl" />
           </button>
         </div>
         <div className="w-full px-4 mt-2">

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import firebase from '../firebase/firebase'; 
-import { useDashboardContext } from '../context/DashboardContext'; 
+import firebase from "../firebase/firebase";
+import { useDashboardContext } from "../context/DashboardContext";
 
 function AddEventPopup({ currentUser, toggleModal }) {
   const [color, setColor] = useState("#FFFFFF");
@@ -8,9 +8,9 @@ function AddEventPopup({ currentUser, toggleModal }) {
   const [desc, setDesc] = useState("");
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
-  const [date, setDate] = useState(""); 
+  const [date, setDate] = useState("");
 
-  const { attendanceState, updateData } = useDashboardContext(); 
+  const { attendanceState, updateData } = useDashboardContext();
   const popupColors = [
     "#ffadad",
     "#ffd6a5",
@@ -38,31 +38,34 @@ function AddEventPopup({ currentUser, toggleModal }) {
 
   function addNewEvent() {
     if (title.trim() === "" || date === "") {
-      window.alert("Title and date fields are mandatory"); 
-      return; 
-    } 
-    const response = firebase.firestore().collection("users").doc(currentUser.uid); 
+      window.alert("Title and date fields are mandatory");
+      return;
+    }
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
     response.get().then((snapshot) => {
       const newEvent = {
-        email: currentUser.email, 
-        title: title, 
-        desc: desc, 
-        start: start, 
-        end: end, 
-        date: date, 
-        color: color, 
+        email: currentUser.email,
+        title: title,
+        desc: desc,
+        start: start,
+        end: end,
+        date: date,
+        color: color,
       };
-      const today = getToday(); 
-      const prev = snapshot.data().events; 
-      prev.push(newEvent); 
-      const updated = prev; 
-      if(newEvent.date === today) updated.push(newEvent);
-      updateData(attendanceState.data, updated); 
+      const today = getToday();
+      const prev = snapshot.data().events;
+      prev.push(newEvent);
+      const updated = prev;
+      if (newEvent.date === today) updated.push(newEvent);
+      updateData(attendanceState.data, updated);
       response.update({
-        events: prev,  
-      }); 
-      toggleModal(false); 
-    }); 
+        events: prev,
+      });
+      toggleModal(false);
+    });
   }
 
   return (
@@ -83,17 +86,17 @@ function AddEventPopup({ currentUser, toggleModal }) {
             placeholder="Enter event Title"
           />
         </div>
-          <div className="flex flex-col text-sm font-bold mt-4">
-            <label>Pick Date</label>
-            <input
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-              style={{ backgroundColor: color }}
-              className=""
-              type="date"
-              placeholder="Date"
-            />
-          </div>
+        <div className="flex flex-col text-sm font-bold mt-4">
+          <label>Pick Date</label>
+          <input
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            style={{ backgroundColor: color }}
+            className=""
+            type="date"
+            placeholder="Date"
+          />
+        </div>
         <div className="flex flex-row w-full space-x-14">
           <div className="flex flex-col text-sm font-bold mt-4">
             <label>Start</label>
@@ -143,8 +146,10 @@ function AddEventPopup({ currentUser, toggleModal }) {
           })}
         </div>
         <div className="flex flex-row mt-2 w-full justify-end">
-          <button onClick={addNewEvent}
-            className="bg-grey-900 px-4 py-2 text-white font-bold outline-none border-none focus:outline-none">
+          <button
+            onClick={addNewEvent}
+            className="bg-grey-900 px-4 py-2 text-white font-bold outline-none border-none focus:outline-none"
+          >
             Add
           </button>
         </div>

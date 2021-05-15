@@ -11,15 +11,12 @@ import firebase from "../firebase/firebase";
 const AttendanceChart = React.memo(() => {
   const firestore = firebase.firestore();
   const { currentUser } = useAuthContext();
-  const {
-    attendanceState, 
-    updateData, 
-  } = useDashboardContext();
-  
-  var labels = Object.keys(attendanceState.data); 
-  var data = Object.values(attendanceState.data); 
+  const { attendanceState, updateData } = useDashboardContext();
+
+  var labels = Object.keys(attendanceState.data);
+  var data = Object.values(attendanceState.data);
   const attendanceData = {
-    labels: labels,  
+    labels: labels,
     datasets: [
       {
         label: "Attendance",

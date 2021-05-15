@@ -16,7 +16,7 @@ function TodoComponent({ currentUser }) {
 
     response.get().then((snapshot) => {
       var temp = [];
-      if (snapshot.data()) temp = snapshot.data().todos; 
+      if (snapshot.data()) temp = snapshot.data().todos;
       setTasks(temp);
     });
   }, []);
@@ -118,8 +118,8 @@ function TodoComponent({ currentUser }) {
       .collection("users")
       .doc(currentUser.uid);
     response.update({
-      todos: taskList, 
-    }); 
+      todos: taskList,
+    });
   };
   return (
     <>
