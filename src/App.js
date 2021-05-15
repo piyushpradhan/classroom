@@ -5,7 +5,6 @@ import LoginForm from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
 import { DashboardProvider } from "./context/DashboardContext";
-import PrivateRoute from "./components/PrivateRoute";
 
 function App() {
   return (
