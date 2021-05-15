@@ -232,8 +232,8 @@ export default class Calendar extends React.Component {
 
     let daysInMonth = [];
     for (let d = 1; d <= this.daysInMonth(); d++) {
-      let currentDayClass =
-        d === this.currentDay()
+      var currentDayClass =
+        d.toString() === this.currentDay().toString()
           ? "bg-white border-2 border-black flex flex-row text-black font-bold w-16 h-16 justify-center items-center transition-all"
           : "flex flex-row text-black font-bold w-16 h-16 justify-center items-center hover:bg-grey-900 hover:text-white transition all duration-300 ease-in-out";
       daysInMonth.push(
