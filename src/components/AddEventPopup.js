@@ -58,9 +58,11 @@ function AddEventPopup({ currentUser, toggleModal }) {
       const today = getToday();
       const prev = snapshot.data().events;
       prev.push(newEvent);
-      const updated = prev;
-      if (newEvent.date === today) updated.push(newEvent);
-      updateData(attendanceState.data, updated);
+      if (newEvent.date === today) {
+        var updated = prev;
+        updated = updated.filter((event) => event.date === today);
+        updateData(attendanceState.data, updated);
+      }
       response.update({
         events: prev,
       });
