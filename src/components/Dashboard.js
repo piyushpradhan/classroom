@@ -36,7 +36,7 @@ function Dashboard() {
   const [newSubjectName, setNewSubjectName] = useState("");
   const [modalIsOpen, toggleModal] = useState(false);
 
-  const { attendanceState, updateData } = useDashboardContext();
+  const { dashboardState, updateData } = useDashboardContext();
 
   const { currentUser } = useAuthContext();
 
@@ -76,7 +76,7 @@ function Dashboard() {
     response.get().then((snapshot) => {
       const temp = snapshot.data().attendanceData;
       temp[newSubjectName] = 0;
-      updateData(temp, attendanceState.events);
+      updateData(temp, dashboardState.events);
       response.update({
         attendanceData: temp,
       });
@@ -95,7 +95,7 @@ function Dashboard() {
         }
         return item;
       });
-      updateData(temp, attendanceState.events);
+      updateData(temp, dashboardState.events);
       response.update({
         attendanceData: temp,
       });
@@ -103,9 +103,9 @@ function Dashboard() {
   }
 
   function incrementAttendance(sub) {
-    var updated = attendanceState.data;
+    var updated = dashboardState.data;
     updated[sub]++;
-    updateData(updated, attendanceState.events);
+    updateData(updated, dashboardState.events);
     const response = firebase
       .firestore()
       .collection("users")
@@ -116,9 +116,9 @@ function Dashboard() {
   }
 
   function decrementAttendance(sub) {
-    var updated = attendanceState.data;
+    var updated = dashboardState.data;
     updated[sub]--;
-    updateData(updated, attendanceState.events);
+    updateData(updated, dashboardState.events);
     const response = firebase
       .firestore()
       .collection("users")
@@ -158,7 +158,7 @@ function Dashboard() {
                 26th April 2021
               </div>
               <div className="flex flex-col mt-4">
-                {Object.keys(attendanceState.data).map((label) => {
+                {Object.keys(dashboardState.data).map((label) => {
                   return (
                     <div className="flex flex-row justify-between w-full">
                       <div className="flex flex-row items-center w-full justify-between">
@@ -170,7 +170,7 @@ function Dashboard() {
                           <FiChevronLeft />
                         </button>
                         <div className="bg-grey-900 flex-grow-1 rounded rounded-full px-2 py-0 mt-1 text-white">
-                          {label} {attendanceState.data[label]}
+                          {label} {dashboardState.data[label]}
                         </div>
                         <button
                           onClick={() => {
@@ -213,7 +213,7 @@ function Dashboard() {
       <div className="flex flex-col md:items-center 2xl:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">
         <Calendar
           updateData={updateData}
-          attendanceState={attendanceState}
+          dashboardState={dashboardState}
           currentUser={currentUser}
         />
         <div className="flex flex-row md:px-4 mt-10 w-full justify-between">
@@ -226,7 +226,7 @@ function Dashboard() {
           </button>
         </div>
         <div className="w-full px-4 mt-2">
-          {attendanceState.events.map((event) => {
+          {dashboardState.events.map((event) => {
             var bgColor = "white";
             if (event.color !== null || event.color !== "")
               bgColor = event.color;
