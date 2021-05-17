@@ -93,7 +93,7 @@ function Dashboard() {
         if (item === selectedSub) {
           delete temp[item];
         }
-        return item; 
+        return item;
       });
       updateData(temp, attendanceState.events);
       response.update({
