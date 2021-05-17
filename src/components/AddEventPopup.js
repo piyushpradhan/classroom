@@ -10,7 +10,7 @@ function AddEventPopup({ currentUser, toggleModal }) {
   const [end, setEnd] = useState("");
   const [date, setDate] = useState("");
 
-  const { attendanceState, updateData } = useDashboardContext();
+  const { dashboardState, updateData } = useDashboardContext();
   const popupColors = [
     "#ffadad",
     "#ffd6a5",
@@ -61,7 +61,7 @@ function AddEventPopup({ currentUser, toggleModal }) {
       if (newEvent.date === today) {
         var updated = prev;
         updated = updated.filter((event) => event.date === today);
-        updateData(attendanceState.data, updated);
+        updateData(dashboardState.data, updated);
       }
       response.update({
         events: prev,

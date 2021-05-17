@@ -4,10 +4,10 @@ import { Bar } from "react-chartjs-2";
 import { useDashboardContext } from "../context/DashboardContext";
 
 const AttendanceChart = React.memo(() => {
-  const { attendanceState } = useDashboardContext();
+  const { dashboardState } = useDashboardContext();
 
-  var labels = Object.keys(attendanceState.data);
-  var data = Object.values(attendanceState.data);
+  var labels = Object.keys(dashboardState.data);
+  var data = Object.values(dashboardState.data);
   const attendanceData = {
     labels: labels,
     datasets: [

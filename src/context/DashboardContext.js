@@ -1,14 +1,10 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-} from "react";
+import React, { createContext, useState, useContext } from "react";
 import { AuthProvider } from "../context/AuthContext";
 
 const DashboardContext = createContext();
 
 export const DashboardProvider = ({ children }) => {
-  const [attendanceState, setAttendanceState] = useState({
+  const [dashboardState, setDashboardState] = useState({
     data: {},
     events: [],
   });
@@ -16,15 +12,15 @@ export const DashboardProvider = ({ children }) => {
   function updateData(newData, newEvents) {
     const tempData = {
       data: newData,
-      events: newEvents, 
+      events: newEvents,
     };
 
-    setAttendanceState(tempData);
+    setDashboardState(tempData);
   }
 
   return (
     <AuthProvider>
-      <DashboardContext.Provider value={{ attendanceState, updateData }}>
+      <DashboardContext.Provider value={{ dashboardState, updateData }}>
         {children}
       </DashboardContext.Provider>
     </AuthProvider>

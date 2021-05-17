@@ -19,7 +19,7 @@ export default class Calendar extends React.Component {
     this.style = props.style || {};
     this.style.width = this.width;
     this.currentUser = props.currentUser;
-    this.attendanceState = props.attendanceState;
+    this.dashboardState = props.dashboardState;
     this.updateData = props.updateData;
   }
 
@@ -87,12 +87,7 @@ export default class Calendar extends React.Component {
           key={data}
           className="text-sm mt-1 hover:bg-grey-200 transition all duration-200"
         >
-          <button
-            onClick={(e) => {
-            }}
-          >
-            {data}
-          </button>
+          <button onClick={(e) => {}}>{data}</button>
         </div>
       );
     });
@@ -195,12 +190,8 @@ export default class Calendar extends React.Component {
           var events = [];
           events = snapshot.data().events;
           var data = snapshot.data().attendanceData;
-            var selected =
-              this.year() +
-              "-" +
-              this.state.dateContext.format("MM") +
-              "-" +
-              day;
+          var selected =
+            this.year() + "-" + this.state.dateContext.format("MM") + "-" + day;
           const filtered = events.filter((event) => event.date === selected);
           this.updateData(data, filtered);
         });
