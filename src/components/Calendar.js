@@ -85,9 +85,15 @@ export default class Calendar extends React.Component {
       return (
         <div
           key={data}
-          className="text-sm mt-1 hover:bg-grey-200 transition all duration-200"
+          className="text-sm font-bold mt-1 hover:bg-grey-200 transition all duration-200"
         >
-          <button onClick={(e) => {}}>{data}</button>
+          <button
+            onClick={(e) => {
+              this.onSelectChange(e, data);
+            }}
+          >
+            {data}
+          </button>
         </div>
       );
     });
@@ -225,18 +231,18 @@ export default class Calendar extends React.Component {
     for (let d = 1; d <= this.daysInMonth(); d++) {
       var currentDayClass =
         d.toString() === this.currentDay().toString()
-          ? "bg-white border-2 border-black flex flex-row text-black font-bold w-16 h-16 justify-center items-center transition-all"
-          : "flex flex-row text-black font-bold w-16 h-16 justify-center items-center hover:bg-grey-900 hover:text-white transition all duration-300 ease-in-out";
+          ? "bg-white border-2 border-black flex flex-row focus:outline-none text-black font-bold w-16 h-16 justify-center items-center transition-all"
+          : "flex flex-row text-black font-bold w-16 h-16 focus:bg-white focus:outline-none justify-center items-center hover:bg-grey-900 hover:text-white transition all duration-300 ease-in-out";
       daysInMonth.push(
-        <div key={d} className={currentDayClass}>
-          <span
-            onClick={(e) => {
-              this.onDayClick(e, d);
-            }}
-          >
-            {d}
-          </span>
-        </div>
+        <button
+          key={d}
+          className={currentDayClass}
+          onClick={(e) => {
+            this.onDayClick(e, d);
+          }}
+        >
+          <span>{d}</span>
+        </button>
       );
     }
 

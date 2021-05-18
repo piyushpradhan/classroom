@@ -1,21 +1,18 @@
-import React, { useState, useEffect } from "react";
-import Modal from "react-modal";
-
+import React, { useEffect, useState } from "react";
 import { BiCalendarPlus } from "react-icons/bi";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
-
-import Calendar from "../components/Calendar";
+import Modal from "react-modal";
 import AttendanceChart from "../components/AttendanceChart";
+import Calendar from "../components/Calendar";
 import DashboardHeader from "../components/DashboardHeader";
 import TodoComponent from "../components/TodoComponent";
-
-import firebase from "../firebase/firebase";
-import { useDashboardContext } from "../context/DashboardContext";
 import { useAuthContext } from "../context/AuthContext";
-import ScheduledEvent from "./ScheduledEvent";
-import AddEventPopup from "./AddEventPopup";
+import { useDashboardContext } from "../context/DashboardContext";
+import firebase from "../firebase/firebase";
 import "../public/css/dashboard.css";
+import AddEventPopup from "./AddEventPopup";
+import ScheduledEvent from "./ScheduledEvent";
 
 const modalStyle = {
   content: {
@@ -226,11 +223,17 @@ function Dashboard() {
           </button>
         </div>
         <div className="w-full px-4 mt-2">
-          {dashboardState.events.map((event) => {
+          {dashboardState.events.map((event, index) => {
             var bgColor = "white";
             if (event.color !== null || event.color !== "")
               bgColor = event.color;
-            return <ScheduledEvent event={event} popupColor={bgColor} />;
+            return (
+              <ScheduledEvent
+                event={event}
+                popupColor={bgColor}
+                toggleModal={toggleModal}
+              />
+            );
           })}
         </div>
       </div>
