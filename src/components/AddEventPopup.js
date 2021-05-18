@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import firebase from "../firebase/firebase";
 import { useDashboardContext } from "../context/DashboardContext";
+import { RiAddCircleFill } from "react-icons/ri";
+import { firestore } from "firebase-admin";
 
 function AddEventPopup({ currentUser, toggleModal }) {
   const [color, setColor] = useState("#FFFFFF");
@@ -9,6 +11,9 @@ function AddEventPopup({ currentUser, toggleModal }) {
   const [start, setStart] = useState("");
   const [end, setEnd] = useState("");
   const [date, setDate] = useState("");
+  const [people, setPeople] = useState([]);
+
+  const [person, setPerson] = useState("");
 
   const { dashboardState, updateData } = useDashboardContext();
   const popupColors = [
@@ -54,6 +59,7 @@ function AddEventPopup({ currentUser, toggleModal }) {
         end: end,
         date: date,
         color: color,
+        people: people,
       };
       const today = getToday();
       const prev = snapshot.data().events;
@@ -66,8 +72,36 @@ function AddEventPopup({ currentUser, toggleModal }) {
       response.update({
         events: prev,
       });
+
+      const users = firebase.firestore().collection("users");
+      var peopleMap = {};
+      people.forEach((singlePerson) => {
+        peopleMap[singlePerson] = 1;
+      });
+      users.get().then((response) => {
+        response.docs.forEach((doc) => {
+          const docRef = firebase.firestore().collection("users").doc(doc.id);
+          if (peopleMap[doc.data().email] === 1) {
+            var temp = doc.data().events;
+            temp.push(newEvent);
+            docRef.update({
+              events: temp,
+            });
+            peopleMap[doc.data().email] = 0;
+          }
+        });
+      });
       toggleModal(false);
     });
+  }
+
+  function addPeople(e) {
+    e.preventDefault();
+    var tempList = people;
+    tempList.push(person);
+    setPeople(people);
+
+    setPerson("");
   }
 
   return (
@@ -122,6 +156,31 @@ function AddEventPopup({ currentUser, toggleModal }) {
               placeholder="Start"
             />
           </div>
+        </div>
+        <div className="mt-4 flex flex-col">
+          <label className="font-bold text-md">Add people</label>
+          <form className="flex flex-row justify-between items-center">
+            <input
+              type="text"
+              value={person}
+              onChange={(e) => setPerson(e.target.value)}
+              placeholder="example@email.com"
+              className="text-sm py-1 focus:outline-none"
+            />
+            <button
+              onClick={(e) => addPeople(e)}
+              className="py-1 px-1 text-xl rounded rounded-lg focus:outline-none hover:bg-grey-200"
+            >
+              <RiAddCircleFill />
+            </button>
+          </form>
+          {people.map((singlePerson) => {
+            return (
+              <div className="text-sm mt-1 bg-grey-200 px-1 border border-grey-400">
+                {singlePerson}
+              </div>
+            );
+          })}
         </div>
         <div className="mt-4 w-full">
           <textarea
