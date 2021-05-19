@@ -4,14 +4,20 @@ import { useDashboardContext } from "../context/DashboardContext";
 import { RiAddCircleFill } from "react-icons/ri";
 import { firestore } from "firebase-admin";
 
-function AddEventPopup({ currentUser, toggleModal }) {
+function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
   const [color, setColor] = useState("#FFFFFF");
-  const [title, setTitle] = useState("");
-  const [desc, setDesc] = useState("");
-  const [start, setStart] = useState("");
-  const [end, setEnd] = useState("");
-  const [date, setDate] = useState("");
-  const [people, setPeople] = useState([]);
+  const [title, setTitle] = useState(eventData == null ? "" : eventData.title);
+
+  const [desc, setDesc] = useState(eventData == null ? "" : eventData.desc);
+  const [start, setStart] = useState(eventData == null ? "" : eventData.start);
+  const [end, setEnd] = useState(eventData == null ? "" : eventData.end);
+  const [date, setDate] = useState(eventData == null ? "" : eventData.date);
+  const [people, setPeople] = useState(
+    eventData == null ? [] : eventData.people
+  );
+  const [meetingLink, setMeetingLink] = useState(
+    eventData == null ? "" : eventData.meetingLink
+  );
 
   const [person, setPerson] = useState("");
 
@@ -26,6 +32,17 @@ function AddEventPopup({ currentUser, toggleModal }) {
     "#bdb2ff",
     "#ffc6ff",
   ];
+
+  function uuid() {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(
+      /[xy]/g,
+      function (c) {
+        var r = (Math.random() * 16) | 0,
+          v = c == "x" ? r : (r & 0x3) | 0x8;
+        return v.toString(16);
+      }
+    );
+  }
 
   function updateColor(updatedColor) {
     setColor(updatedColor);
@@ -46,53 +63,124 @@ function AddEventPopup({ currentUser, toggleModal }) {
       window.alert("Title and date fields are mandatory");
       return;
     }
-    const response = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid);
-    response.get().then((snapshot) => {
-      const newEvent = {
-        email: currentUser.email,
-        title: title,
-        desc: desc,
-        start: start,
-        end: end,
-        date: date,
-        color: color,
-        people: people,
-      };
-      const today = getToday();
-      const prev = snapshot.data().events;
-      prev.push(newEvent);
-      if (newEvent.date === today) {
-        var updated = prev;
-        updated = updated.filter((event) => event.date === today);
-        updateData(dashboardState.data, updated);
-      }
-      response.update({
-        events: prev,
-      });
-
-      const users = firebase.firestore().collection("users");
-      var peopleMap = {};
-      people.forEach((singlePerson) => {
-        peopleMap[singlePerson] = 1;
-      });
-      users.get().then((response) => {
-        response.docs.forEach((doc) => {
-          const docRef = firebase.firestore().collection("users").doc(doc.id);
-          if (peopleMap[doc.data().email] === 1) {
-            var temp = doc.data().events;
-            temp.push(newEvent);
-            docRef.update({
-              events: temp,
-            });
-            peopleMap[doc.data().email] = 0;
-          }
+    if (eventData == null) {
+      const response = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+      response.get().then((snapshot) => {
+        const newEvent = {
+          id: uuid(),
+          email: currentUser.email,
+          title: title,
+          desc: desc,
+          start: start,
+          end: end,
+          date: date,
+          color: color,
+          people: people,
+          meetingLink: meetingLink,
+        };
+        const today = getToday();
+        const prev = snapshot.data().events;
+        prev.push(newEvent);
+        if (newEvent.date === today) {
+          var updated = prev;
+          updated = updated.filter((event) => event.date === today);
+          updateData(dashboardState.data, updated);
+        }
+        response.update({
+          events: prev,
         });
+
+        const users = firebase.firestore().collection("users");
+        var peopleMap = {};
+        people.forEach((singlePerson) => {
+          peopleMap[singlePerson] = 1;
+        });
+        users.get().then((response) => {
+          response.docs.forEach((doc) => {
+            const docRef = firebase.firestore().collection("users").doc(doc.id);
+            if (peopleMap[doc.data().email] === 1) {
+              var temp = doc.data().events;
+              temp.push(newEvent);
+              docRef.update({
+                events: temp,
+              });
+              peopleMap[doc.data().email] = 0;
+            }
+          });
+        });
+        setEventData(null);
+        toggleModal(false);
       });
-      toggleModal(false);
-    });
+    } else {
+      const response = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+      response.get().then((snapshot) => {
+        const updatedEvent = {
+          id: eventData.id,
+          email: currentUser.email,
+          title: title,
+          desc: desc,
+          start: start,
+          end: end,
+          date: date,
+          color: color,
+          people: people,
+          meetingLink: meetingLink,
+        };
+        var eventList = snapshot.data().events;
+        var updatedEventList = eventList.map((e) => {
+          if (e.id === eventData.id) {
+            return updatedEvent;
+          }
+          return e;
+        });
+        const today = getToday();
+        if (updatedEvent.date === today) {
+          var updated = updatedEventList;
+          updated = updated.filter((event) => event.date === today);
+          updateData(dashboardState.data, updated);
+        }
+        response.update({
+          events: updatedEventList,
+        });
+
+        if (updatedEvent.people.length > 0) {
+          const users = firebase.firestore().collection("users");
+          var peopleMap = {};
+          people.forEach((singlePerson) => {
+            peopleMap[singlePerson] = 1;
+          });
+          users.get().then((response) => {
+            response.docs.forEach((doc) => {
+              const docRef = firebase
+                .firestore()
+                .collection("users")
+                .doc(doc.id);
+              if (peopleMap[doc.data().email] === 1) {
+                var temp = doc.data().events;
+                var updated = temp.map((e) => {
+                  if (e.id === eventData.id) {
+                    return updatedEvent;
+                  }
+                  return e;
+                });
+                docRef.update({
+                  events: updated,
+                });
+                peopleMap[doc.data().email] = 0;
+              }
+            });
+          });
+        }
+        setEventData(null);
+        toggleModal(false);
+      });
+    }
   }
 
   function addPeople(e) {
@@ -158,7 +246,17 @@ function AddEventPopup({ currentUser, toggleModal }) {
           </div>
         </div>
         <div className="mt-4 flex flex-col">
-          <label className="font-bold text-md">Add people</label>
+          <input
+            type="text"
+            value={meetingLink}
+            onChange={(e) => setMeetingLink(e.target.value)}
+            placeholder="Add meeting link"
+            className="text-sm py-1 focus:outline-none"
+            style={{ backgroundColor: color }}
+          />
+        </div>
+        <div className="mt-4 flex flex-col">
+          <label className="font-bold text-sm">Add people</label>
           <form className="flex flex-row justify-between items-center">
             <input
               type="text"
@@ -166,6 +264,7 @@ function AddEventPopup({ currentUser, toggleModal }) {
               onChange={(e) => setPerson(e.target.value)}
               placeholder="example@email.com"
               className="text-sm py-1 focus:outline-none"
+              style={{ backgroundColor: color }}
             />
             <button
               onClick={(e) => addPeople(e)}

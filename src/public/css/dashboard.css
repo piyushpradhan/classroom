@@ -1,7 +1,12 @@
-.dashboard::-webkit-scrollbar {
-  display: none;
-}
+@layer utilities {
+  @variants responsive {
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
 
-.dashboard {
-  -ms-overflow-style: none;
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  }
 }

@@ -32,6 +32,7 @@ const modalStyle = {
 function Dashboard() {
   const [newSubjectName, setNewSubjectName] = useState("");
   const [modalIsOpen, toggleModal] = useState(false);
+  const [eventData, setEventData] = useState(null);
 
   const { dashboardState, updateData } = useDashboardContext();
 
@@ -126,6 +127,7 @@ function Dashboard() {
   }
 
   function openModal() {
+    setEventData(null);
     toggleModal(true);
   }
 
@@ -134,13 +136,18 @@ function Dashboard() {
   }
 
   return (
-    <div className="dashboard w-screen min-h-screen flex 2xl:flex-row flex-col justify-between">
+    <div className="no-scrollbar w-screen min-h-screen flex 2xl:flex-row flex-col justify-between">
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={modalStyle}
       >
-        <AddEventPopup currentUser={currentUser} toggleModal={toggleModal} />
+        <AddEventPopup
+          currentUser={currentUser}
+          toggleModal={toggleModal}
+          eventData={eventData}
+          setEventData={setEventData}
+        />
       </Modal>
       <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16  h-full">
         <DashboardHeader />
@@ -232,6 +239,7 @@ function Dashboard() {
                 event={event}
                 popupColor={bgColor}
                 toggleModal={toggleModal}
+                setEventData={setEventData}
               />
             );
           })}
