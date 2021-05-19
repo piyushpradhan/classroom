@@ -1,8 +1,13 @@
 import React from "react";
 
-function ScheduledEvent({ popupColor, event }) {
+function ScheduledEvent({ popupColor, event, setEventData, toggleModal }) {
+  function eventClickHandler() {
+    setEventData(event);
+    toggleModal(true);
+  }
+
   return (
-    <>
+    <a href="#" onClick={eventClickHandler} className="block">
       <div className="relative w-full mt-4">
         <div className="absolute bg-grey-900 w-full h-full -right-2 -bottom-2"></div>
         <div
@@ -23,7 +28,7 @@ function ScheduledEvent({ popupColor, event }) {
           </div>
         </div>
       </div>
-    </>
+    </a>
   );
 }
 

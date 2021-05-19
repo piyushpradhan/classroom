@@ -3,7 +3,7 @@ import { Bar } from "react-chartjs-2";
 
 import { useDashboardContext } from "../context/DashboardContext";
 
-const AttendanceChart = React.memo(() => {
+const AttendanceChart = () => {
   const { dashboardState } = useDashboardContext();
 
   var labels = Object.keys(dashboardState.data);
@@ -26,6 +26,6 @@ const AttendanceChart = React.memo(() => {
       <Bar data={attendanceData} />
     </>
   );
-});
+};
 
-export default AttendanceChart;
+export default React.memo(AttendanceChart);
