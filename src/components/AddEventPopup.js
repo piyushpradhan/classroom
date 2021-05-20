@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import firebase from "../firebase/firebase";
-import { useDashboardContext } from "../context/DashboardContext";
+import React, { useEffect, useState } from "react";
 import { RiAddCircleFill } from "react-icons/ri";
-import { firestore } from "firebase-admin";
+import { useDashboardContext } from "../context/DashboardContext";
+import firebase from "../firebase/firebase";
+
+import { GrClose } from "react-icons/gr";
 
 function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
   const [color, setColor] = useState("#FFFFFF");
@@ -18,8 +19,16 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
   const [meetingLink, setMeetingLink] = useState(
     eventData == null ? "" : eventData.meetingLink
   );
-
+  const [disabledInputs, setDisabledInputs] = useState(false);
   const [person, setPerson] = useState("");
+
+  useEffect(() => {
+    if (eventData !== null) {
+      if (eventData.email !== currentUser.email) {
+        setDisabledInputs(true);
+      }
+    }
+  }, []);
 
   const { dashboardState, updateData } = useDashboardContext();
   const popupColors = [
@@ -141,8 +150,10 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
         });
         const today = getToday();
         if (updatedEvent.date === today) {
-          var updated = updatedEventList;
-          updated = updated.filter((event) => event.date === today);
+          console.log(updatedEvent.date + "gap" + today);
+          var updated = updatedEventList.filter(
+            (event) => event.date === today
+          );
           updateData(dashboardState.data, updated);
         }
         response.update({
@@ -192,6 +203,10 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
     setPerson("");
   }
 
+  function closeModal() {
+    toggleModal(false);
+  }
+
   return (
     <div className="relative md:w-96 h-full">
       <div className="absolute w-full h-full bg-grey-900 -right-2 -bottom-2"></div>
@@ -199,13 +214,22 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
         style={{ backgroundColor: color }}
         className="relative w-full border-2 border-black bg-white p-8 flex flex-col items-start"
       >
-        <div className="text-xl font-bold">Add Event</div>
+        <div className="flex flex-row w-full justify-between">
+          <div className="text-xl font-bold">Add Event</div>
+          <button
+            onClick={closeModal}
+            className="font-bold hover:bg-grey-200 focus:outline-none p-1 rounded-lg"
+          >
+            <GrClose />
+          </button>
+        </div>
         <div className="mt-4 w-full">
           <input
             style={{ backgroundColor: color }}
             className="focus:outline-none w-full text-sm"
             type="text"
             value={title}
+            disabled={disabledInputs}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="Enter event Title"
           />
@@ -214,6 +238,7 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
           <label>Pick Date</label>
           <input
             value={date}
+            disabled={disabledInputs}
             onChange={(e) => setDate(e.target.value)}
             style={{ backgroundColor: color }}
             className=""
@@ -226,6 +251,7 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
             <label>Start</label>
             <input
               value={start}
+              disabled={disabledInputs}
               onChange={(e) => setStart(e.target.value)}
               style={{ backgroundColor: color }}
               className=""
@@ -237,6 +263,7 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
             <label>End</label>
             <input
               value={end}
+              disabled={disabledInputs}
               onChange={(e) => setEnd(e.target.value)}
               style={{ backgroundColor: color }}
               className=""
@@ -249,6 +276,7 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
           <input
             type="text"
             value={meetingLink}
+            disabled={disabledInputs}
             onChange={(e) => setMeetingLink(e.target.value)}
             placeholder="Add meeting link"
             className="text-sm py-1 focus:outline-none"
@@ -261,12 +289,14 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
             <input
               type="text"
               value={person}
+              disabled={disabledInputs}
               onChange={(e) => setPerson(e.target.value)}
               placeholder="example@email.com"
               className="text-sm py-1 focus:outline-none"
               style={{ backgroundColor: color }}
             />
             <button
+              disabled={disabledInputs}
               onClick={(e) => addPeople(e)}
               className="py-1 px-1 text-xl rounded rounded-lg focus:outline-none hover:bg-grey-200"
             >
@@ -284,6 +314,7 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
         <div className="mt-4 w-full">
           <textarea
             value={desc}
+            disabled={disabledInputs}
             onChange={(e) => setDesc(e.target.value)}
             style={{ backgroundColor: color }}
             className="text-sm w-full w-max-full focus:outline-none"
@@ -294,11 +325,12 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
           {popupColors.map((palette) => {
             return (
               <button
+                disabled={disabledInputs}
                 className="focus:outline-none"
                 onClick={() => updateColor(palette)}
               >
                 <div
-                  className="w-6 h-6 rounded rounded-full"
+                  className="w-6 h-6 rounded-full"
                   style={{ backgroundColor: palette }}
                 ></div>
               </button>
@@ -307,6 +339,7 @@ function AddEventPopup({ currentUser, toggleModal, eventData, setEventData }) {
         </div>
         <div className="flex flex-row mt-2 w-full justify-end">
           <button
+            disabled={disabledInputs}
             onClick={addNewEvent}
             className="bg-grey-900 px-4 py-2 text-white font-bold outline-none border-none focus:outline-none"
           >
