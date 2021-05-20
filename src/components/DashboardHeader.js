@@ -1,24 +1,33 @@
 import React from "react";
 
 import { useAuthContext } from "../context/AuthContext";
+import { FiLogOut } from "react-icons/fi";
 
-function DashboardHeader() {
+function DashboardHeader({ logout, isTeacher }) {
   const { currentUser } = useAuthContext();
 
   return (
     <>
-      <div className="flex flex-row my-8">
-        <img
-          className="w-16 h-16 rounded-full"
-          src={currentUser ? currentUser.photoURL : ""}
-          alt=""
-        />
-        <div className="flex flex-col mx-4">
-          <div className="text-2xl font-bold">
-            {currentUser ? currentUser.displayName : ""}
+      <div className="flex flex-row my-8 w-full justify-between items-center">
+        <div className="flex flex-row">
+          <img
+            className="w-16 h-16 rounded-full"
+            src={currentUser ? currentUser.photoURL : ""}
+            alt=""
+          />
+          <div className="flex flex-col mx-4">
+            <div className="text-2xl font-bold">
+              {currentUser ? currentUser.displayName : ""}
+            </div>
+            <div className="text-md">{isTeacher ? "Teacher" : "Student"}</div>
           </div>
-          <div className="text-md">Regd. No: 1901106220</div>
         </div>
+        <button
+          onClick={logout}
+          className="focus:outline-none text-2xl my-4 p-2 rounded-lg hover:bg-grey-100"
+        >
+          <FiLogOut />
+        </button>
       </div>
     </>
   );
