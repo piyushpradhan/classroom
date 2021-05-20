@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { BiCalendarPlus } from "react-icons/bi";
-import { FaRegTrashAlt } from "react-icons/fa";
-import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import Modal from "react-modal";
-import AttendanceChart from "../components/AttendanceChart";
+import { useHistory } from "react-router-dom";
 import Calendar from "../components/Calendar";
 import DashboardHeader from "../components/DashboardHeader";
-import TodoComponent from "../components/TodoComponent";
 import { useAuthContext } from "../context/AuthContext";
 import { useDashboardContext } from "../context/DashboardContext";
 import firebase from "../firebase/firebase";
 import "../public/css/dashboard.css";
 import AddEventPopup from "./AddEventPopup";
+import DashboardHome from "./DashboardHome";
+import DashboardProfile from "./DashboardProfile";
 import ScheduledEvent from "./ScheduledEvent";
+import DashboardClassroom from "./DashboardClassroom";
 
 const modalStyle = {
   content: {
@@ -30,13 +30,16 @@ const modalStyle = {
 };
 
 function Dashboard() {
-  const [newSubjectName, setNewSubjectName] = useState("");
   const [modalIsOpen, toggleModal] = useState(false);
   const [eventData, setEventData] = useState(null);
+  const [tabIndex, setTabIndex] = useState(0);
+  const [isTeacher, setTeacher] = useState(false);
 
   const { dashboardState, updateData } = useDashboardContext();
 
   const { currentUser } = useAuthContext();
+
+  const history = useHistory();
 
   useEffect(() => {
     const response = firebase
@@ -52,6 +55,15 @@ function Dashboard() {
     });
   }, []);
 
+  function logout() {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        history.push("/");
+      });
+  }
+
   function getToday() {
     var today = new Date();
     var dd = String(today.getDate()).padStart(2, "0");
@@ -66,66 +78,6 @@ function Dashboard() {
     var today = getToday();
     const events = snapshotData.events.filter((event) => event.date === today);
     return events;
-  }
-
-  function addSubject() {
-    if (newSubjectName.trim() !== "") {
-      const firestore = firebase.firestore();
-      const response = firestore.collection("users").doc(currentUser.uid);
-      response.get().then((snapshot) => {
-        const temp = snapshot.data().attendanceData;
-        temp[newSubjectName] = 0;
-        updateData(temp, dashboardState.events);
-        response.update({
-          attendanceData: temp,
-        });
-      });
-      setNewSubjectName("");
-    }
-  }
-
-  function deleteSubject(selectedSub) {
-    const firestore = firebase.firestore();
-    const response = firestore.collection("users").doc(currentUser.uid);
-    response.get().then((snapshot) => {
-      const temp = snapshot.data().attendanceData;
-      Object.keys(temp).map((item) => {
-        if (item === selectedSub) {
-          delete temp[item];
-        }
-        return item;
-      });
-      updateData(temp, dashboardState.events);
-      response.update({
-        attendanceData: temp,
-      });
-    });
-  }
-
-  function incrementAttendance(sub) {
-    var updated = dashboardState.data;
-    updated[sub]++;
-    updateData(updated, dashboardState.events);
-    const response = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid);
-    response.update({
-      attendanceData: updated,
-    });
-  }
-
-  function decrementAttendance(sub) {
-    var updated = dashboardState.data;
-    updated[sub]--;
-    updateData(updated, dashboardState.events);
-    const response = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid);
-    response.update({
-      attendanceData: updated,
-    });
   }
 
   function openModal() {
@@ -153,69 +105,34 @@ function Dashboard() {
         />
       </Modal>
       <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16  h-full">
-        <DashboardHeader />
-        <div className="text-xl my-4 font-bold">Attendance Chart</div>
-        <div className="flex flex-col h-full">
-          <div className="flex flex-col items-center xl:max-h-max lg:flex-row border-2 border-grey-900 xl:w-full py-4">
-            <div className="sm:w-3/5 sm:h-full mx-4">
-              <AttendanceChart />
-            </div>
-            <div className="w-full sm:w-2/5 m-4 flex flex-col">
-              <div className="text-md font-bold text-center mb-2">
-                26th April 2021
-              </div>
-              <div className="flex flex-col mt-4">
-                {Object.keys(dashboardState.data).map((label) => {
-                  return (
-                    <div className="flex flex-row justify-between w-full">
-                      <div className="flex flex-row items-center w-full justify-between">
-                        <button
-                          onClick={() => {
-                            decrementAttendance(label);
-                          }}
-                        >
-                          <FiChevronLeft />
-                        </button>
-                        <div className="bg-grey-900 flex-grow-1 rounded rounded-full px-2 py-0 mt-1 text-white">
-                          {label} {dashboardState.data[label]}
-                        </div>
-                        <button
-                          onClick={() => {
-                            incrementAttendance(label);
-                          }}
-                        >
-                          <FiChevronRight />
-                        </button>
-                        <button onClick={() => deleteSubject(label)}>
-                          <FaRegTrashAlt />
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-              <div className="flex flex-col border-2 border-grey-900 sm:mt-11 mx-8 sm:ml-8">
-                <div className="text-md font-semibold text-center mt-2">
-                  Add new subject
-                </div>
-                <input
-                  className="mx-8 my-3 text-sm focus:outline-none"
-                  type="text"
-                  placeholder="Subject..."
-                  value={newSubjectName}
-                  onChange={(e) => setNewSubjectName(e.target.value)}
-                />
-                <button
-                  onClick={addSubject}
-                  className="font-bold uppercase text-white bg-grey-900"
-                >
-                  Add
-                </button>
-              </div>
-            </div>
-          </div>
-          <TodoComponent currentUser={currentUser} />
+        <DashboardHeader logout={logout} isTeacher={isTeacher} />
+        <div className="flex flex-row space-x-7 justify-center">
+          <button
+            onClick={(e) => setTabIndex(0)}
+            className="font-bold text-md border-2 border-grey-900 px-4 py-1 transition all duration-200 ease-in-out hover:bg-grey-900 hover:text-white"
+          >
+            Home
+          </button>
+          <button
+            onClick={(e) => setTabIndex(1)}
+            className="font-bold text-md border-2 border-grey-900 px-4 py-1 transition all duration-200 ease-in-out hover:bg-grey-900 hover:text-white"
+          >
+            Classroom
+          </button>
+          <button
+            onClick={(e) => setTabIndex(2)}
+            className="font-bold text-md border-2 border-grey-900 px-4 py-1 transition all duration-200 ease-in-out hover:bg-grey-900 hover:text-white"
+          >
+            Profile
+          </button>
         </div>
+        {tabIndex === 0 ? (
+          <DashboardHome currentUser={currentUser} />
+        ) : tabIndex === 1 ? (
+          <DashboardClassroom isTeacher={isTeacher} />
+        ) : (
+          <DashboardProfile isTeacher={isTeacher} setTeacher={setTeacher} />
+        )}
       </div>
       <div className="flex flex-col md:items-center 2xl:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">
         <Calendar
