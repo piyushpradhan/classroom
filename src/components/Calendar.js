@@ -232,7 +232,7 @@ export default class Calendar extends React.Component {
       var currentDayClass =
         d.toString() === this.currentDay().toString()
           ? "bg-white border-2 border-black flex flex-row focus:outline-none text-black font-bold w-16 h-16 justify-center items-center transition-all"
-          : "flex flex-row text-black font-bold w-16 h-16 focus:bg-white focus:outline-none justify-center items-center hover:bg-grey-900 hover:text-white transition all duration-300 ease-in-out";
+          : "flex flex-row text-black font-bold w-16 h-16 focus:bg-grey-300 focus:outline-none justify-center items-center hover:bg-grey-900 hover:text-white transition all duration-300 ease-in-out";
       daysInMonth.push(
         <button
           key={d}

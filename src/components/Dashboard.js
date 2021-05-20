@@ -69,17 +69,19 @@ function Dashboard() {
   }
 
   function addSubject() {
-    const firestore = firebase.firestore();
-    const response = firestore.collection("users").doc(currentUser.uid);
-    response.get().then((snapshot) => {
-      const temp = snapshot.data().attendanceData;
-      temp[newSubjectName] = 0;
-      updateData(temp, dashboardState.events);
-      response.update({
-        attendanceData: temp,
+    if (newSubjectName.trim() !== "") {
+      const firestore = firebase.firestore();
+      const response = firestore.collection("users").doc(currentUser.uid);
+      response.get().then((snapshot) => {
+        const temp = snapshot.data().attendanceData;
+        temp[newSubjectName] = 0;
+        updateData(temp, dashboardState.events);
+        response.update({
+          attendanceData: temp,
+        });
       });
-    });
-    setNewSubjectName("");
+      setNewSubjectName("");
+    }
   }
 
   function deleteSubject(selectedSub) {
@@ -141,6 +143,7 @@ function Dashboard() {
         isOpen={modalIsOpen}
         onRequestClose={closeModal}
         style={modalStyle}
+        ariaHideApp={false}
       >
         <AddEventPopup
           currentUser={currentUser}
