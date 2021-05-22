@@ -13,6 +13,7 @@ import DashboardHome from "./DashboardHome";
 import DashboardProfile from "./DashboardProfile";
 import ScheduledEvent from "./ScheduledEvent";
 import DashboardClassroom from "./DashboardClassroom";
+import { useClassroomContext } from "../context/ClassroomContext";
 
 const modalStyle = {
   content: {
@@ -33,9 +34,9 @@ function Dashboard() {
   const [modalIsOpen, toggleModal] = useState(false);
   const [eventData, setEventData] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
-  const [isTeacher, setTeacher] = useState(false);
 
   const { dashboardState, updateData } = useDashboardContext();
+  const { classroomState, setTeacher } = useClassroomContext();
 
   const { currentUser } = useAuthContext();
 
@@ -52,6 +53,10 @@ function Dashboard() {
       var tempEvents = [];
       if (snapshot.data()) tempEvents = getTodayEvents(snapshot.data());
       updateData(temp, tempEvents);
+    });
+
+    setTeacher({
+      isTeacher: false,
     });
   }, []);
 
@@ -105,7 +110,7 @@ function Dashboard() {
         />
       </Modal>
       <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16  h-full">
-        <DashboardHeader logout={logout} isTeacher={isTeacher} />
+        <DashboardHeader logout={logout} />
         <div className="flex flex-row space-x-7 justify-center">
           <button
             onClick={(e) => setTabIndex(0)}
@@ -129,9 +134,9 @@ function Dashboard() {
         {tabIndex === 0 ? (
           <DashboardHome currentUser={currentUser} />
         ) : tabIndex === 1 ? (
-          <DashboardClassroom isTeacher={isTeacher} />
+          <DashboardClassroom />
         ) : (
-          <DashboardProfile isTeacher={isTeacher} setTeacher={setTeacher} />
+          <DashboardProfile />
         )}
       </div>
       <div className="flex flex-col md:items-center 2xl:mt-0 md:px-2 mt-8 md:flex-grow-1 bg-grey-200">

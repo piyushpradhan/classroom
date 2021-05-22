@@ -1,11 +1,80 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { BiTrash } from "react-icons/bi";
 import { useAuthContext } from "../context/AuthContext";
+import { useClassroomContext } from "../context/ClassroomContext";
 import { useDashboardContext } from "../context/DashboardContext";
 
-const DashboardProfile = ({ isTeacher, setTeacher }) => {
+import firebase from "../firebase/firebase";
+
+const DashboardProfile = () => {
   const { currentUser } = useAuthContext();
   const { dashboardState } = useDashboardContext();
+  const { classroomState, setTeacher, setTeacherExplicit } = useClassroomContext();
+
+  const [newTeacher, setNewTeacher] = useState("");
+  const [teachersList, setTeachersList] = useState([]);
   var subjects = Object.keys(dashboardState.data);
+
+  useEffect(() => {
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+    response.get().then((snapshot) => {
+      var teachersList = [];
+      if (snapshot.data() !== undefined)
+        teachersList = snapshot.data().teachers;
+      setTeachersList(teachersList);
+    });
+  }, []);
+
+  function addTeacher() {
+    if (newTeacher.trim() !== "") {
+      const response = firebase
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+      response.get().then((snapshot) => {
+        var teachersList = [];
+        if (snapshot.data() !== undefined)
+          teachersList = snapshot.data().teachers;
+        teachersList.push(newTeacher);
+        response.update({
+          teachers: teachersList,
+        });
+        setTeachersList(teachersList);
+      });
+      setNewTeacher("");
+    }
+  }
+
+  function deleteTeacher(index) {
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+    response.get().then((snapshot) => {
+      var teachersList = [];
+      if (snapshot.data() !== undefined)
+        teachersList = snapshot.data().teachers;
+      teachersList.splice(index, 1);
+      response.update({
+        teachers: teachersList,
+      });
+      setTeachersList(teachersList);
+    });
+  }
+
+  function toggleStatus() {
+    setTeacher();
+    const response = firebase
+      .firestore()
+      .collection("users")
+      .doc(currentUser.uid);
+    response.update({
+      isTeacher: classroomState.isTeacher,
+    });
+  }
 
   return (
     <div className="relative max-w-max mt-8 self-center">
@@ -22,18 +91,49 @@ const DashboardProfile = ({ isTeacher, setTeacher }) => {
               {currentUser.displayName}
             </div>
             <div className="md:text-lg text-md">
-              {isTeacher ? "Teacher" : "Student"}
+              {classroomState.isTeacher ? "Teacher" : "Student"}
             </div>
           </div>
         </div>
         <div className="flex flex-row justify-start items-center space-x-4 md:px-8 px-4">
           <div className="text-md">Toggle your status:</div>
           <button
-            onClick={(e) => setTeacher(!isTeacher)}
+            onClick={toggleStatus}
             className="font-bold text-md max-w-max border-2 border-grey-900 px-4 py-1 transition all duration-200 ease-in-out hover:bg-grey-900 hover:text-white"
           >
-            {isTeacher === true ? "Student" : "Teacher"}
+            {classroomState.isTeacher === true ? "Student" : "Teacher"}
           </button>
+        </div>
+
+        <div className="flex flex-row justify-between items-center md:mx-8 mx-4">
+          <input
+            type="text"
+            value={newTeacher}
+            onChange={(e) => setNewTeacher(e.target.value)}
+            className="focus:outline-none"
+            placeholder="Add a teacher"
+          />
+          <button
+            onClick={addTeacher}
+            className="px-4 py-1 focus:outline-none bg-grey-900 text-white font-bold"
+          >
+            Add
+          </button>
+        </div>
+        <div className="flex flex-col md:mx-8 mx-4">
+          {teachersList.map((t, ind) => {
+            return (
+              <div className="flex flex-row bg-grey-200 justify-between items-center">
+                <div className="text-sm py-0.5 px-1">{t}</div>
+                <button
+                  onClick={(e) => deleteTeacher(ind)}
+                  className="focus:outline-none"
+                >
+                  <BiTrash />
+                </button>
+              </div>
+            );
+          })}
         </div>
         <div className="flex flex-col md:px-8 px-4">
           <div className="font-bold text-md">My Subjects</div>
