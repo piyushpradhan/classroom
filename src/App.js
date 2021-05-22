@@ -5,6 +5,7 @@ import LoginForm from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import { AuthProvider } from "./context/AuthContext";
 import { DashboardProvider } from "./context/DashboardContext";
+import { ClassroomProvider } from "./context/ClassroomContext";
 
 function App() {
   return (
@@ -12,10 +13,12 @@ function App() {
       <Router>
         <AuthProvider>
           <DashboardProvider>
-            <Switch>
-              <Route  path="/dashboard" component={Dashboard} />
-              <Route exact path="/" component={LoginForm} />
-            </Switch>
+            <ClassroomProvider>
+              <Switch>
+                <Route path="/dashboard" component={Dashboard} />
+                <Route exact path="/" component={LoginForm} />
+              </Switch>
+            </ClassroomProvider>
           </DashboardProvider>
         </AuthProvider>
       </Router>

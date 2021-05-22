@@ -2,9 +2,11 @@ import React from "react";
 
 import { useAuthContext } from "../context/AuthContext";
 import { FiLogOut } from "react-icons/fi";
+import { useClassroomContext } from "../context/ClassroomContext";
 
-function DashboardHeader({ logout, isTeacher }) {
+function DashboardHeader({ logout }) {
   const { currentUser } = useAuthContext();
+  const { classroomState } = useClassroomContext();
 
   return (
     <>
@@ -19,7 +21,9 @@ function DashboardHeader({ logout, isTeacher }) {
             <div className="text-2xl font-bold">
               {currentUser ? currentUser.displayName : ""}
             </div>
-            <div className="text-md">{isTeacher ? "Teacher" : "Student"}</div>
+            <div className="text-md">
+              {classroomState.isTeacher ? "Teacher" : "Student"}
+            </div>
           </div>
         </div>
         <button

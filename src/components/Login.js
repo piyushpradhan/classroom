@@ -33,6 +33,10 @@ function LoginForm() {
           attendanceData: {},
           events: [],
           todos: [],
+          teachers: [],
+          assignments: [],
+          announcements: [],
+          isTeacher: false,
         });
       }
     });

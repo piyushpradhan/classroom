@@ -19,11 +19,9 @@ export const DashboardProvider = ({ children }) => {
   }
 
   return (
-    <AuthProvider>
-      <DashboardContext.Provider value={{ dashboardState, updateData }}>
-        {children}
-      </DashboardContext.Provider>
-    </AuthProvider>
+    <DashboardContext.Provider value={{ dashboardState, updateData }}>
+      {children}
+    </DashboardContext.Provider>
   );
 };
 
