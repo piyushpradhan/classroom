@@ -14,6 +14,7 @@ import DashboardProfile from "./DashboardProfile";
 import ScheduledEvent from "./ScheduledEvent";
 import DashboardClassroom from "./DashboardClassroom";
 import { useClassroomContext } from "../context/ClassroomContext";
+import { GrClose } from "react-icons/gr";
 
 const modalStyle = {
   content: {
@@ -32,15 +33,23 @@ const modalStyle = {
 
 function Dashboard() {
   const [modalIsOpen, toggleModal] = useState(false);
+  const [snackbar, toggleSnackbar] = useState(true);
   const [eventData, setEventData] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
 
   const { dashboardState, updateData } = useDashboardContext();
-  const { classroomState, setTeacher } = useClassroomContext();
+  const { classroomState, setTeacherExplicit } = useClassroomContext();
 
   const { currentUser } = useAuthContext();
 
   const history = useHistory();
+
+  var snackbarStyle;
+  if (classroomState.isTeacher === false && snackbar === true) {
+    snackbarStyle = "flex flex-row bg-grey-900 justify-between";
+  } else {
+    snackbarStyle = "flex flex-row bg-grey-900 justify-between hidden";
+  }
 
   useEffect(() => {
     const response = firebase
@@ -53,10 +62,7 @@ function Dashboard() {
       var tempEvents = [];
       if (snapshot.data()) tempEvents = getTodayEvents(snapshot.data());
       updateData(temp, tempEvents);
-    });
-
-    setTeacher({
-      isTeacher: false,
+      setTeacherExplicit(snapshot.data().isTeacher);
     });
   }, []);
 
@@ -94,6 +100,10 @@ function Dashboard() {
     toggleModal(false);
   }
 
+  function closeSnackbar() {
+    toggleSnackbar(false);
+  }
+
   return (
     <div className="no-scrollbar w-screen min-h-screen flex 2xl:flex-row flex-col justify-between">
       <Modal
@@ -109,7 +119,19 @@ function Dashboard() {
           setEventData={setEventData}
         />
       </Modal>
-      <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16  h-full">
+      <div className="flex-grow bg-white flex flex-col 2xl:mb-8 px-16 h-full">
+        <div className={snackbarStyle}>
+          <div className="w-full text-white text-sm text-center py-2">
+            Head over to Profile section to change your status to teacher if
+            you'd like to make questions and announcements
+          </div>
+          <button
+            onClick={closeSnackbar}
+            className="font-bold bg-white text-grey-900 focus:outline-none my-2 mr-2 p-1 rounded-md"
+          >
+            <GrClose />
+          </button>
+        </div>
         <DashboardHeader logout={logout} />
         <div className="flex flex-row space-x-7 justify-center">
           <button

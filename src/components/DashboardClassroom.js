@@ -52,6 +52,7 @@ const DashboardClassroom = () => {
           ).values(),
         ];
         questions = [...new Map(questions.map((q) => [q["text"], q])).values()];
+        console.log(questions) ;
         setAnnouncements(announcementsList);
         updateAssignmentList(questions);
       });
