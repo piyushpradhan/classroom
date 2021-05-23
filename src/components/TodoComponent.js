@@ -132,7 +132,13 @@ function TodoComponent({ currentUser }) {
             >
               <div className="flex flex-col">
                 <div className="text-lg font-semibold mb-4">ToDo</div>
-                {tempTask.todo}
+                {tempTask.todo.length === 0 ? (
+                  <div className="border-t border-b border-dashed border-grey-900 py-1 self-center text-grey-500">
+                    Your tasks will appear here
+                  </div>
+                ) : (
+                  tempTask.todo
+                )}
               </div>
               <div className="inline-flex mt-4">
                 <input

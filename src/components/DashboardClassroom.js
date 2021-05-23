@@ -52,7 +52,7 @@ const DashboardClassroom = () => {
           ).values(),
         ];
         questions = [...new Map(questions.map((q) => [q["text"], q])).values()];
-        console.log(questions) ;
+        console.log(questions);
         setAnnouncements(announcementsList);
         updateAssignmentList(questions);
       });
@@ -164,17 +164,30 @@ const DashboardClassroom = () => {
             <div></div>
           )}
           <div className="font-bold text-xl mt-8">Assignments</div>
-          <div className="flex flex-col">
-            {classroomState.assignments.map((assignment, index) => {
-              return (
-                <AssignmentTile
-                  assignment={assignment}
-                  index={index}
-                  assignmentList={classroomState.assignments}
-                />
-              );
-            })}
-          </div>
+          {classroomState.assignments.length === 0 ? (
+            <div className="flex flex-col justify-start items-center">
+              <img
+                className="mt-16 w-96 opacity-70"
+                src="/images/assignments_image.svg"
+                alt="No assignments for you"
+              />
+              <div className="md:text-lg font-bold text-grey-400 mt-16 md:mr-40 self-center">
+                No assignments
+              </div>
+            </div>
+          ) : (
+            <div className="flex flex-col">
+              {classroomState.assignments.map((assignment, index) => {
+                return (
+                  <AssignmentTile
+                    assignment={assignment}
+                    index={index}
+                    assignmentList={classroomState.assignments}
+                  />
+                );
+              })}
+            </div>
+          )}
         </div>
         <div className="flex flex-col w-full max-w-max md:mt-0 mt-4">
           <div className="text-lg font-bold">Announcements</div>
