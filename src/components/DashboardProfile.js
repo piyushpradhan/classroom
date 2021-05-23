@@ -49,6 +49,8 @@ const DashboardProfile = () => {
         setTeachersList(teachersList);
       });
       setNewTeacher("");
+    } else {
+      window.alert("enter a valid teacher's email");
     }
   }
 
@@ -116,7 +118,7 @@ const DashboardProfile = () => {
               value={newTeacher}
               onChange={(e) => setNewTeacher(e.target.value)}
               className="w-full focus:outline-none"
-              placeholder="Add a teacher"
+              placeholder="Add a teacher's email"
             />
             <button
               onClick={addTeacher}
