@@ -96,28 +96,28 @@ const DashboardClassroom = () => {
   }
 
   function onQuestionSubmit() {
-    if(question.trim() !== "") {
+    if (question.trim() !== "") {
       const response = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid);
-    response.get().then((snapshot) => {
-      const newQuestion = {
-        text: question,
-        link: driveLink,
-        author: currentUser.displayName,
-        due: dueDate,
-        answers: [],
-      };
-      var questions = [];
-      if (snapshot.data() !== undefined)
-        questions = snapshot.data().assignments;
-      questions.push(newQuestion);
-      response.update({
-        assignments: questions,
+        .firestore()
+        .collection("users")
+        .doc(currentUser.uid);
+      response.get().then((snapshot) => {
+        const newQuestion = {
+          text: question,
+          link: driveLink,
+          author: currentUser.displayName,
+          due: dueDate,
+          answers: [],
+        };
+        var questions = [];
+        if (snapshot.data() !== undefined)
+          questions = snapshot.data().assignments;
+        questions.push(newQuestion);
+        response.update({
+          assignments: questions,
+        });
+        updateAssignmentList(questions);
       });
-      updateAssignmentList(questions);
-    });
     } else {
       window.alert("You can't send a blank question!");
     }

@@ -40,7 +40,7 @@ function Dashboard() {
   const { dashboardState, updateData } = useDashboardContext();
   const { classroomState, setTeacherExplicit } = useClassroomContext();
 
-  const { currentUser } = useAuthContext();
+  const { currentUser, setCurrentUser } = useAuthContext();
 
   const history = useHistory();
 
@@ -52,17 +52,21 @@ function Dashboard() {
   }
 
   useEffect(() => {
-    const response = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid);
-    response.get().then((snapshot) => {
-      var temp = {};
-      if (snapshot.data()) temp = snapshot.data().attendanceData;
-      var tempEvents = [];
-      if (snapshot.data()) tempEvents = getTodayEvents(snapshot.data());
-      updateData(temp, tempEvents);
-      setTeacherExplicit(snapshot.data().isTeacher);
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        setCurrentUser(user); 
+        const response = firebase.firestore().collection("users").doc(user.uid);
+        response.get().then((snapshot) => {
+          var temp = {};
+          if (snapshot.data()) temp = snapshot.data().attendanceData;
+          var tempEvents = [];
+          if (snapshot.data()) tempEvents = getTodayEvents(snapshot.data());
+          updateData(temp, tempEvents);
+          setTeacherExplicit(snapshot.data().isTeacher);
+        });
+      } else {
+        history.replace("/");
+      }
     });
   }, []);
 
@@ -71,7 +75,7 @@ function Dashboard() {
       .auth()
       .signOut()
       .then(() => {
-        history.push("/");
+        history.replace("/");
       });
   }
 
