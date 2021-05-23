@@ -56,11 +56,22 @@ const AssignmentTile = ({ assignment, index, assignmentList }) => {
           return a;
         });
 
-        console.log(allAssignments);
         updateAssignmentList(allAssignments);
 
         response.update({
           assignments: allAssignments,
+        });
+
+        const res = firebase
+          .firestore()
+          .collection("users")
+          .where("displayName", "==", assignment.author);
+        res.get().then((snapshot) => {
+          snapshot.docs.forEach((doc) => {
+            doc.ref.update({
+              assignments: allAssignments,
+            });
+          });
         });
 
         setAnswer("");
@@ -93,35 +104,41 @@ const AssignmentTile = ({ assignment, index, assignmentList }) => {
         </button>
       </div>
 
-      <div className="flex flex-col mt-4 overflow-y-hidden">
-        <button
-          onClick={(e) => toggleDisplayAnswers(!displayAnswers)}
-          className="flex flex-row justify-between items-center focus:outline-none"
-        >
-          <div className="">Submissions</div>
+      {classroomState.isTeacher ? (
+        <div className="flex flex-col mt-4 overflow-y-hidden">
           <button
             onClick={(e) => toggleDisplayAnswers(!displayAnswers)}
-            className="text-xl"
+            className="flex flex-row justify-between items-center focus:outline-none"
           >
-            <RiArrowDropDownFill />
+            <div className="">Submissions</div>
+            <button
+              onClick={(e) => toggleDisplayAnswers(!displayAnswers)}
+              className="text-xl"
+            >
+              <RiArrowDropDownFill />
+            </button>
           </button>
-        </button>
-        <div className={submissionListStyle}>
-          {assignment.answers.map((answer) => {
-            return (
-              <div className="flex flex-col my-2 mx-2">
-                <div className="flex flex-row justify-between items-center">
-                  <div className="">{answer.text}</div>
+          <div className={submissionListStyle}>
+            {assignment.answers.map((answer) => {
+              return (
+                <div className="flex flex-col my-2 mx-2">
+                  <div className="flex flex-row justify-between items-center">
+                    <div className="">{answer.text}</div>
+                    <div className="text-xs font-semibold">
+                      {answer.submissionDate}
+                    </div>
+                  </div>
                   <div className="text-xs font-semibold">
-                    {answer.submissionDate}
+                    {answer.answeredBy}
                   </div>
                 </div>
-                <div className="text-xs font-semibold">{answer.answeredBy}</div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
-      </div>
+      ) : (
+        <div></div>
+      )}
     </div>
   );
 };

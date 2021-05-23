@@ -9,11 +9,14 @@ import firebase from "../firebase/firebase";
 const DashboardProfile = () => {
   const { currentUser } = useAuthContext();
   const { dashboardState } = useDashboardContext();
-  const { classroomState, setTeacher, setTeacherExplicit } = useClassroomContext();
+  const { classroomState, setTeacher, setTeacherExplicit } =
+    useClassroomContext();
 
   const [newTeacher, setNewTeacher] = useState("");
   const [teachersList, setTeachersList] = useState([]);
   var subjects = Object.keys(dashboardState.data);
+
+  console.log(classroomState.isTeacher);
 
   useEffect(() => {
     const response = firebase
@@ -25,6 +28,7 @@ const DashboardProfile = () => {
       if (snapshot.data() !== undefined)
         teachersList = snapshot.data().teachers;
       setTeachersList(teachersList);
+      setTeacherExplicit(snapshot.data().isTeacher);
     });
   }, []);
 
@@ -66,14 +70,14 @@ const DashboardProfile = () => {
   }
 
   function toggleStatus() {
-    setTeacher();
     const response = firebase
       .firestore()
       .collection("users")
       .doc(currentUser.uid);
     response.update({
-      isTeacher: classroomState.isTeacher,
+      isTeacher: !classroomState.isTeacher,
     });
+    setTeacher();
   }
 
   return (
