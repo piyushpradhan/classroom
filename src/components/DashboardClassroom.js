@@ -96,7 +96,8 @@ const DashboardClassroom = () => {
   }
 
   function onQuestionSubmit() {
-    const response = firebase
+    if(question.trim() !== "") {
+      const response = firebase
       .firestore()
       .collection("users")
       .doc(currentUser.uid);
@@ -117,6 +118,9 @@ const DashboardClassroom = () => {
       });
       updateAssignmentList(questions);
     });
+    } else {
+      window.alert("You can't send a blank question!");
+    }
   }
 
   return (
