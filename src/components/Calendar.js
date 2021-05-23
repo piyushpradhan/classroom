@@ -15,6 +15,12 @@ export default class Calendar extends React.Component {
 
   constructor(props) {
     super(props);
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        this.currentUser = user;
+      } else {
+      }
+    });
     this.width = props.width || "350px";
     this.style = props.style || {};
     this.style.width = this.width;

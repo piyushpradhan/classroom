@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { RiAddCircleFill } from "react-icons/ri";
+import { useHistory } from "react-router-dom";
 
 import firebase from "../firebase/firebase";
 
@@ -11,16 +12,24 @@ function TodoComponent({ currentUser }) {
 
   const [isModalOpen, toggleModal] = useState(false);
 
-  useEffect(() => {
-    const response = firebase
-      .firestore()
-      .collection("users")
-      .doc(currentUser.uid);
+  const history = useHistory();
 
-    response.get().then((snapshot) => {
-      var temp = [];
-      if (snapshot.data()) temp = snapshot.data().todos;
-      setTasks(temp);
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        const response = firebase
+          .firestore()
+          .collection("users")
+          .doc(user.uid);
+
+        response.get().then((snapshot) => {
+          var temp = [];
+          if (snapshot.data()) temp = snapshot.data().todos;
+          setTasks(temp);
+        });
+      } else {
+        history.replace("/");
+      }
     });
   }, []);
 
