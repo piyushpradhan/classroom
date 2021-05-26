@@ -22,7 +22,7 @@ function DashboardHeader({ logout }) {
               {currentUser ? currentUser.displayName : ""}
             </div>
             <div className="text-md">
-              {classroomState.isTeacher ? "Teacher" : "Student"}
+              {classroomState.isTeacher === true ? "Teacher" : "Student"}
             </div>
           </div>
         </div>

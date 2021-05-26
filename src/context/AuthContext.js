@@ -1,15 +1,16 @@
-import { createContext, useState, useContext } from "react";
+import { createContext, useState, useContext, useEffect } from "react";
+import firebase from "../firebase/firebase";
 
 const Auth = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [currentUser, setCurrentUser] = useState(null); 
+  const [currentUser, setCurrentUser] = useState(null);
 
   return (
     <Auth.Provider
       value={{
-        currentUser, 
-        setCurrentUser
+        currentUser,
+        setCurrentUser,
       }}
     >
       {children}

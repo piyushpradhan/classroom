@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
-import firebase from "../firebase/firebase";
-import { useAuthContext } from "../context/AuthContext";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
-
+import { useAuthContext } from "../context/AuthContext";
+import firebase from "../firebase/firebase";
 import "../public/css/login.css";
 
 function LoginForm() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-
   const history = useHistory();
 
   const { setCurrentUser } = useAuthContext();
@@ -33,7 +29,7 @@ function LoginForm() {
           attendanceData: {},
           events: [],
           todos: [],
-          teachers: [],
+          teachers: [user.email],
           assignments: [],
           announcements: [],
           isTeacher: false,
@@ -46,9 +42,9 @@ function LoginForm() {
     e.preventDefault();
     firebase
       .auth()
-      .setPersistence(firebase.auth.Auth.Persistence.SESSION)
+      .setPersistence("session")
       .then(() => {
-        let provider = new firebase.auth.GoogleAuthProvider();
+        var provider = new firebase.auth.GoogleAuthProvider();
         firebase
           .auth()
           .signInWithPopup(provider)
@@ -56,7 +52,10 @@ function LoginForm() {
             setCurrentUser(result.user);
 
             storeUserDetails(result.user);
-
+            localStorage.setItem(
+              "authenticatedUser",
+              JSON.stringify(result.user)
+            );
             history.push("/dashboard");
           })
           .catch((err) => {
