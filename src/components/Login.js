@@ -38,7 +38,7 @@ function LoginForm() {
     });
   }
 
-  const loginWithGoogle = async (e) => {
+  const loginWithGoogle = (e) => {
     e.preventDefault();
     firebase
       .auth()
@@ -52,10 +52,10 @@ function LoginForm() {
             setCurrentUser(result.user);
 
             storeUserDetails(result.user);
-            localStorage.setItem(
-              "authenticatedUser",
-              JSON.stringify(result.user)
-            );
+            // localStorage.setItem(
+            //   "authenticatedUser",
+            //   JSON.stringify(result.user)
+            // );
             history.push("/dashboard");
           })
           .catch((err) => {
